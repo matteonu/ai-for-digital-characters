@@ -20,7 +20,15 @@ python3 export_decks.py --verify --export
 
 Import the CSV files from `anki/decks/` into Anki (Tab separator, HTML enabled).
 
-See `anki/PROCESS.md` and `anki/SCHEDULE.md` for the study workflow.
+See `anki/PROCESS.md`, `anki/SCHEDULE.md`, and `anki/DECK_SUMMARIES.md` for the study workflow and per-deck overviews.
+
+## Slide summaries (PDF)
+
+Condensed lecture summaries are in `summaries/pdfs/` (one PDF per lecture + combined file).
+
+```bash
+cd summaries && python3 generate_slide_summary_pdfs.py
+```
 
 ## Large files (not in repo)
 
