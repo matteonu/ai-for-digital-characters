@@ -1,0 +1,11 @@
+#separator:tab
+#html:true
+#deck:AI Digital Characters::05_Speech_Synthesis
+Front	Back	Tags
+TTS pipeline stages (in order)?	1. <b>Text normalization</b><br>2. <b>Phonetic analysis</b> (G2P)<br>3. <b>Prosodic analysis</b><br>4. <b>Acoustic model</b> (mel spectrogram)<br>5. <b>Vocoder</b> (waveform)<br><br><small><i>Source: L08:pipeline, solution_ex3</i></small>	type:basic batch:1 priority:high
+What is a diphone? Why preferred over phones?	A diphone spans <b>half of each adjacent phone</b> — captures coarticulation transitions. Sounds more natural than isolated phones.<br><br><small><i>Source: exam2024:Q6a-i</i></small>	type:basic batch:1
+Unit selection: target cost vs. join cost?	<b>Target cost:</b> how well a unit matches desired acoustic features.<br><b>Join cost:</b> discontinuity at unit boundaries.<br>Minimize total cost to select best sequence.<br><br><small><i>Source: exam2024:Q6a-ii</i></small>	type:basic batch:1
+Tacotron 2 vs. FastSpeech — key architectural difference?	<b>Tacotron 2:</b> autoregressive decoder + attention (implicit duration).<br><b>FastSpeech:</b> non-autoregressive + <b>duration predictor</b> (parallel decoding).<br><br><small><i>Source: exam2024:Q6b-ii, solution_ex3:2a</i></small>	type:basic batch:1 priority:high
+Griffin-Lim vs. WaveNet vs. HiFi-GAN?	<b>Griffin-Lim:</b> iterative phase recovery, no training, fast but robotic.<br><b>WaveNet:</b> autoregressive neural, high quality, slow.<br><b>HiFi-GAN:</b> GAN vocoder, parallel, real-time, near WaveNet quality.<br><br><small><i>Source: exam2024:Q6b-iii, solution_ex3:3a</i></small>	type:basic batch:1 priority:high
+DiffWave: forward process, reverse process, conditioning?	<b>Forward:</b> add Gaussian noise over steps.<br><b>Reverse:</b> iteratively denoise, predict noise at each step.<br><b>Conditioned on:</b> mel spectrogram.<br><br><small><i>Source: exam2025:Q6b-ii, solution_ex3:3d</i></small>	type:basic batch:1
+Why learned speaker embeddings over one-hot in multi-speaker TTS?	Embeddings capture <b>continuous similarity</b> between speakers, enable interpolation, and generalize better than sparse one-hot vectors.<br><br><small><i>Source: exam2025:Q6b-iii, solution_ex3:4a</i></small>	type:basic batch:1

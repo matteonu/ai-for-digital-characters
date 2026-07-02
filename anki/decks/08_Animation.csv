@@ -1,0 +1,12 @@
+#separator:tab
+#html:true
+#deck:AI Digital Characters::08_Animation
+Front	Back	Tags
+Forward kinematics vs. inverse kinematics?	<b>FK:</b> given joint angles → compute end-effector position.<br><b>IK:</b> given target position → compute joint angles.<br><br><small><i>Source: solution_ex4:2a, exam2024:Q9</i></small>	type:basic batch:1 priority:high
+Jacobian IK update formula?	Δθ = α · J⁺ · Δe<br>where Δe = target − current end-effector, J⁺ = pseudoinverse of Jacobian, α = learning rate.<br><br><small><i>Source: solution_ex4:2b, exam2024:Q9</i></small>	type:basic batch:1 priority:high
+What is the candy-wrapper artifact in LBS?	At large joint rotations, linear blend skinning causes <b>unnatural twisting</b> and volume loss around the joint axis.<br><br><small><i>Source: solution_ex4:2a5, exam2024:Q1s</i></small>	type:basic batch:1 priority:high
+What is DeepPhase's core idea?	Learns <b>phase-aware</b> periodic motion representations via autoencoder — captures motion manifolds for data-driven animation synthesis and editing.<br><br><small><i>Source: exam2024:Q9b, exam2025:Q9b-i, solution_ex4:3a</i></small>	type:basic batch:1 priority:high
+Normalizing flows — main idea and one animation application?	Learn <b>invertible</b> mappings from simple prior to complex data distribution; exact likelihood via Jacobian determinant.<br><b>Application:</b> diverse motion generation with temporal consistency.<br><br><small><i>Source: exam2025:Q9b-ii, solution_ex4:1h</i></small>	type:basic batch:1
+Exam 2024 IK: L1=5, L2=4, θ₁=θ₂=π/2, target [5,5], α=0.1.<br>Compute initial end-effector e₀.	e₀ = [5·cos(π/2)+4·cos(π), 5·sin(π/2)+4·sin(π)]<br>= [0+(−4), 5+0] = <b>[−4, 5]</b><br><br><small><i>Source: exam2024:Q9a-i, solution_ex4:2b</i></small>	type:calc batch:1 priority:high
+Exam 2024 IK (continued): e₀=[−4,5], target [5,5]. Compute Δe.	Δe = [5,5] − [−4,5] = <b>[9, 0]</b><br><br><small><i>Source: exam2024:Q9a-ii, solution_ex4:2b</i></small>	type:calc batch:1
+Exam 2024 IK (continued): J⁺=[[−0.2,0],[0.2,−0.25]], Δe=[9,0], α=0.1.<br>Compute Δθ.	Δθ = 0.1 · J⁺ · Δe = 0.1 · [−1.8, 1.8] = <b>[−0.18, 0.18]</b><br><br><small><i>Source: exam2024:Q9a-iv, solution_ex4:2b</i></small>	type:calc batch:1 priority:high

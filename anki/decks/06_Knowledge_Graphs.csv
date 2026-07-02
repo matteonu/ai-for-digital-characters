@@ -1,0 +1,10 @@
+#separator:tab
+#html:true
+#deck:AI Digital Characters::06_Knowledge_Graphs
+Front	Back	Tags
+Standard format for knowledge graphs?	<b>RDF triples:</b> (subject, predicate, object) — e.g. (Dr. Clark, affiliatedWith, CS Dept).<br><br><small><i>Source: exam2024:Q7a, L12:kg</i></small>	type:basic batch:1 priority:high
+SPARQL: what is it used for?	W3C standard <b>query language</b> for RDF knowledge graphs. Pattern matching with SELECT/WHERE.<br><br><small><i>Source: exam2024:Q7b, solution_ex5:2b</i></small>	type:basic batch:1 priority:high
+Massive incomplete KG: what approach instead of exact SPARQL?	<b>Knowledge graph embeddings</b> (TransE, TransR) — represent entities/relations as vectors for link prediction and similarity queries.<br><br><small><i>Source: exam2024:Q7b, L12:kge</i></small>	type:basic batch:1 priority:high
+TransE scoring function?	For triple (h, r, t): score = <b>||h + r − t||</b> (L1 or L2 norm).<br>Lower score = more likely true. Training: minimize score for true triples.<br><br><small><i>Source: exam2025:Q7c, solution_ex5:2c</i></small>	type:basic batch:1 priority:high
+Why can't TransE represent symmetric relations well?	TransE models r as <b>translation</b>: h + r ≈ t. For symmetric r: h + r ≈ t AND t + r ≈ h implies r ≈ 0 — can't capture meaningful symmetric relations.<br><br><small><i>Source: exam2025:Q7c-iii</i></small>	type:basic batch:1 priority:high
+Exam 2025 TransE: h=[2.0,1.5,−0.5], r=[−0.2,−0.7,0.3], t=[1.8,0.8,−0.2].<br>Score for (h, supervise, t)?	h + r = [1.8, 0.8, −0.2] = t<br>h + r − t = [0, 0, 0]<br>||h+r−t||₂ = <b>0.0</b> (well below threshold 2.0 → likely true)<br><br><small><i>Source: exam2025:Q7c-i</i></small>	type:calc batch:1 priority:high

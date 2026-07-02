@@ -1,0 +1,8 @@
+#separator:tab
+#html:true
+#deck:AI Digital Characters::07_Reinforcement_Learning
+Front	Back	Tags
+Define MDP components: state, action, reward, policy, return.	<b>State s:</b> environment observation<br><b>Action a:</b> agent's choice<br><b>Reward r:</b> scalar feedback<br><b>Policy π(a|s):</b> action distribution<br><b>Return R:</b> discounted sum of rewards<br><br><small><i>Source: exam2024:Q8, exam2025:Q8, L14:mdp</i></small>	type:basic batch:1 priority:high
+Q(s,a) and V(s) relationship?	Q(s,a) = expected return from taking action a in state s.<br>V(s) = E_{a~π}[Q(s,a)] = Σ_a π(a|s)·Q(s,a).<br><br><small><i>Source: exam2025:Q8c, L14:value_functions</i></small>	type:basic batch:1 priority:high
+Three advantages of PPO + Actor-Critic over vanilla policy gradient?	1. <b>Critic baseline</b> reduces variance<br>2. <b>Clipped surrogate</b> prevents destructively large updates<br>3. <b>Sample efficiency</b> via multiple epochs on same batch<br><br><small><i>Source: exam2025:Q8d, L14:ppo</i></small>	type:basic batch:1 priority:high
+Why use RL instead of supervised learning for physics simulation tasks?	Simulation is typically <b>non-differentiable</b> — can't backprop through physics. RL learns from trial-and-error rewards.<br><br><small><i>Source: solution_ex5:3a, L14:applications</i></small>	type:basic batch:1 priority:high

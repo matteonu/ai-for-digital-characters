@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+
+# GitHub file size limit is 100 MB
+exercises/Project/Unity Template.zip
+Exercises-20260620.zip
+
+# Redundant archives (extracted folders are tracked)
+Slides-20260620.zip
