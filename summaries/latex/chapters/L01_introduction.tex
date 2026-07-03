@@ -1,0 +1,95 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Course overview}
+
+\goal{Understand what a conversational digital character is and which AI techniques are required to build one end to end.}
+
+A \term{digital character} in this course is not merely a 3D avatar or a chatbot in isolation. It is an integrated system that can \emph{listen}, \emph{understand}, \emph{respond}, \emph{speak}, and \emph{move} in a way that conveys personality and emotional state. The central engineering challenge is therefore not any single model, but the \emph{pipeline} that connects perception, language, speech, and animation.
+
+The course covers the following capabilities:
+\begin{itemize}
+  \item \textbf{Speech recognition} --- converting the user's voice into text.
+  \item \textbf{Language modeling / chatbots} --- generating an appropriate textual response.
+  \item \textbf{Speech synthesis} --- turning the response text into natural-sounding speech.
+  \item \textbf{Animation synthesis} --- driving the character's face and body from speech and affect.
+  \item \textbf{Affective computing} --- detecting and modeling user and character emotion.
+  \item \textbf{Autonomous agents} --- decision-making beyond fixed scripts, including knowledge graphs and reinforcement learning.
+\end{itemize}
+
+\subsection{Assessment}
+
+The final grade is determined by a \textbf{written exam} (120 minutes, 120 points). No summary sheet is allowed. A non-programmable calculator and a neutral dictionary (mother tongue to English) are permitted. There is no formal requirement to complete the exercises in order to sit the exam, but the five exercises are closely aligned with exam question types.
+
+Optionally, quizzes in seven lectures can improve the grade: 25 out of 35 correct answers yield a bonus of $+0.25$ grade points.
+
+\section{The conversational digital character pipeline}
+
+At the highest level, interaction follows a loop:
+
+\begin{enumerate}
+  \item The user speaks. A microphone captures audio.
+  \item \textbf{Speech recognition} produces a transcript.
+  \item Parallel \textbf{affective sensing} may analyze video, speech prosody, or biosignals to estimate user emotion, intention, and personality-relevant cues.
+  \item A \textbf{chatbot} (typically a large language model, optionally grounded in a knowledge graph or dialogue policy) generates response text conditioned on the transcript and user state.
+  \item \textbf{Speech synthesis} converts the response text into an audio waveform.
+  \item \textbf{Animation synthesis} drives facial expression, gaze, gesture, and body motion consistent with the speech and the character's intended affect.
+  \item The character's own emotional state may be updated and fed back into later turns.
+\end{enumerate}
+
+This loop explains why the course is structured as a sequence of specialized lectures rather than a single ``AI'' topic: each stage has different data representations, models, evaluation metrics, and failure modes.
+
+\subsection{Dialogue trees versus language models}
+
+Historically, conversational systems used \textbf{dialogue trees} or finite state machines: manually authored nodes and branches. Such systems are deterministic, easy to control, and low risk for narrow domains. However, they scale poorly to open-ended conversation and cannot gracefully handle unexpected user input.
+
+Modern systems increasingly rely on \textbf{large language models} (LLMs) for open-domain response generation. LLMs trade control for flexibility. The course therefore spends substantial time on both \emph{generation} and \emph{adaptation} techniques (prompt engineering, fine-tuning, retrieval-augmented generation) as well as on classical components that remain essential (speech front-ends, animation, knowledge grounding).
+
+\section{Course map}
+
+The fourteen lectures group naturally into three parts:
+
+\paragraph{Part I --- Perception and foundations (L01--L04).}
+Introduction, affective computing, deep learning preliminaries, and speech recognition. These lectures establish how we sense the user and extract features from raw signals.
+
+\paragraph{Part II --- Language and speech (L05--L09).}
+Three chatbot lectures plus two speech synthesis lectures. Here the focus shifts to text generation, grounding, multimodality, and spoken output.
+
+\paragraph{Part III --- Embodiment and agency (L10--L14).}
+Animation (classical and learning-based), autonomous agents with knowledge graphs, real-world applications and ethics, and reinforcement learning for behavior synthesis.
+
+\section{Use cases and motivation}
+
+Digital characters appear in education, healthcare, museums, entertainment, and location-based experiences. A recurring case study in the course is \textbf{Digital Einstein}: an interactive platform that lets users converse with an Albert Einstein avatar. That project illustrates all pipeline stages: speech input, LLM responses grounded in historical material, neural speech synthesis, and image or video-based presentation.
+
+Other motivating scenarios include:
+\begin{itemize}
+  \item \textbf{Healthcare:} virtual doctors or psychotherapists that must sound empathetic and trustworthy.
+  \item \textbf{Education:} tutors that adapt to student affect.
+  \item \textbf{Metaverse / companions:} persistent characters with personality.
+  \item \textbf{Museums:} guides that explain exhibits in natural language.
+\end{itemize}
+
+Across these settings, the same technical components reappear; what changes is the domain knowledge, safety requirements, and evaluation methodology.
+
+\section{Historical note on speech synthesis}
+
+Speech synthesis has evolved through three broad eras mentioned in the introduction lecture:
+\begin{enumerate}
+  \item \textbf{Concatenative} methods that stitch recorded speech units.
+  \item \textbf{Statistical parametric} methods with signal-processing vocoders.
+  \item \textbf{Neural end-to-end} systems that predict spectrograms or waveforms directly.
+\end{enumerate}
+
+Understanding this progression helps when exams ask you to compare Tacotron, FastSpeech, and classical unit selection: the trade-off is usually between \emph{naturalness}, \emph{controllability}, and \emph{inference speed}.
+
+\section{Exam orientation}
+
+Past exams (2024 and 2025) follow a stable structure: a scored multiple-choice block (wrong answers penalized), followed by eight to nine open questions spanning affective computing, attention calculations, Mel filter banks, chatbots, speech synthesis, knowledge graphs, reinforcement learning, and animation (often including a Jacobian IK step). The MC section heavily reuses concepts also tested in the five exercises.
+
+When studying this summary, pay special attention to:
+\begin{itemize}
+  \item \textbf{False/true traps} in terminology (e.g.\ Mel scale is logarithmic; dialogue trees are \emph{not} flexible).
+  \item \textbf{Calculations} with shown formulas (attention, Mel filters, TransE, IK).
+  \item \textbf{Comparisons} between paired techniques (Tacotron vs.\ FastSpeech, early vs.\ late fusion, FK vs.\ IK).
+\end{itemize}

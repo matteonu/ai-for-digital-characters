@@ -1,0 +1,145 @@
+\chapter{Affective Computing}
+\label{ch:affective}
+
+\goal{Detect and model human affect from video, audio, text, and biosignals so that digital characters can respond empathetically.}
+
+\section{What is affect?}
+
+Human behavior is commonly described as arising from three ingredients: \textbf{cognition} (thinking), \textbf{affect} (feeling), and \textbf{behavior} (acting). \term{Affect} is broader than emotion alone. It includes moods, attitudes, preferences, and interpersonal stances (e.g.\ warm vs.\ distant).
+
+For digital characters, affect matters because users do not judge conversations on factual correctness alone. Prosody, facial expression, and timing strongly influence whether a character feels trustworthy, empathetic, or uncanny. The lecture therefore covers both \emph{theories} that explain emotion and \emph{sensors/algorithms} that estimate affect from data.
+
+Applications highlighted in the slides include education (predicting student affect to improve learning gain), healthcare (depression prevalence estimation, therapeutic agents), and the Digital Einstein pipeline (user emotion in, animated expression out).
+
+\section{Theories of emotion}
+
+Emotion theories answer: \emph{in what order do subjective experience, bodily changes, and behavior occur?}
+
+\subsection{James--Lange theory}
+
+The \textbf{James--Lange theory} claims that emotions arise \emph{after} physiological responses to a stimulus:
+\[
+\text{Stimulus} \rightarrow \text{Physiological response} \rightarrow \text{Emotion}
+\]
+Example: seeing a snake increases heart rate first; the feeling of fear is the interpretation of that bodily state. This is \textbf{sequential}, not simultaneous.
+
+\problem{Exams often state that James--Lange triggers emotion and bodily changes at the same time. That description matches Cannon--Bard, not James--Lange.}
+
+\subsection{Cannon--Bard theory}
+
+The \textbf{Cannon--Bard theory} proposes that physiological arousal and subjective emotional experience occur \textbf{in parallel}, both triggered by the same stimulus via thalamic signals to cortex and autonomic nervous system.
+
+\subsection{Schachter--Singer (two-factor) theory}
+
+The \textbf{Schachter--Singer theory} adds cognitive interpretation: the same physiological arousal can yield different emotions depending on context. Emotion = arousal + label assigned to the situation.
+
+\subsection{Dimensional models}
+
+\term{Dimensional theories} reduce affect to continuous axes, most commonly:
+\begin{itemize}
+  \item \textbf{Valence} --- pleasant vs.\ unpleasant.
+  \item \textbf{Arousal} --- calm vs.\ excited.
+  \item \textbf{Dominance} --- in control vs.\ overwhelmed.
+\end{itemize}
+
+Russell's \textbf{core affect} framework places emotions in valence--arousal space (e.g.\ boredom: low valence, low arousal; engagement: positive valence, high arousal). Exams may ask you to locate a phrase such as ``anxious, tense, and helpless'' in this space: typically negative valence, high arousal, low dominance.
+
+\subsection{Basic emotions}
+
+\term{Basic emotion} theories (Ekman, Plutchik) posit a small set of innate categories---joy, sadness, disgust, surprise, anger, fear---with characteristic facial expressions and action tendencies (e.g.\ fight/flight). The Facial Action Coding System (FACS) operationalizes this at the muscle level.
+
+\section{Emotion recognition modalities}
+
+Signals can be \textbf{non-invasive} (video, speech, text, surface biosensors) or \textbf{invasive} (blood hormone levels, neurotransmitter measurement). Facial expression analysis and ECG on the skin surface are non-invasive; blood pressure cuff measurement requires physical interaction and is treated as invasive in exercise solutions.
+
+\term{Multimodal sensing} combines channels because no single modality is reliable alone. The lecture pipeline is:
+\[
+\text{preprocessing} \rightarrow \text{feature extraction} \rightarrow \text{classification (valence/arousal or categories)}
+\]
+
+\section{Video-based features}
+
+\subsection{Action Units (AUs)}
+
+\term{Action units} are minimal visible facial muscle movements defined by FACS. There are 46 AUs; examples include AU1 (inner brow raiser), AU12 (lip corner puller), and AU26 (jaw drop). Basic emotion templates combine AUs, e.g.:
+\begin{itemize}
+  \item \textbf{Happiness:} AU6 + AU12
+  \item \textbf{Surprise:} AU1 + AU2 + AU5 + AU26
+  \item \textbf{Fear:} AU1 + AU2 + AU4 + AU5 + AU7 + AU20 + AU26
+\end{itemize}
+
+Tools such as \textbf{OpenFace} output 68 facial landmarks, AU intensities in $[0,5]$, AU presence flags, gaze, and head pose.
+
+\subsection{Eye blinks and gaze}
+
+\textbf{Eye blinks} are derived from AU45 evaluated per frame. \textbf{Gaze} is often discretized into nine regions; gaze away from a stimulus may indicate distraction or avoidance when viewing disturbing images.
+
+\subsection{Mouth Aspect Ratio (MAR)}
+
+MAR measures mouth openness from landmarks:
+\[
+\mathrm{MAR} = \frac{|p_2-p_8| + |p_3-p_7| + |p_4-p_6|}{3 \cdot |p_5-p_1|}
+\]
+It complements AUs for speaking and surprise detection.
+
+\subsection{Fidgeting}
+
+\term{Fidgeting} captures gross body/face movement energy in video:
+\begin{enumerate}
+  \item $f_{\mathrm{temp}} = f_{\mathrm{gray}} - b_{\mathrm{gray}}$ (difference from background model)
+  \item Threshold $|f_{\mathrm{temp}}| > t$ to binary mask
+  \item Energy $E$ = percentage of surviving pixels
+  \item Update background $b' = (1-\alpha)b + \alpha f$
+\end{enumerate}
+Statistics (mean, std, min, max of $E$ over frames) feed classifiers.
+
+\section{Biosensors}
+
+\subsection{Cardiac signals}
+
+\textbf{ECG} records electrical heart activity from skin electrodes. \textbf{PPG} measures reflected light from blood vessels and can even be estimated from webcam video.
+
+\term{Heart rate variability (HRV)} quantifies variation in beat-to-beat intervals. Time-domain measures include standard deviation of R--R intervals, RMSSD, and pNN50. \textbf{Higher HRV} is often associated with relaxed, adaptive autonomic states; \textbf{lower HRV} with stress or anxiety. HRV is influenced by age, posture, breathing, and activity.
+
+\subsection{Skin conductance}
+
+\term{Skin conductance} (electrodermal activity) measures sweating-related conductance of the skin and reflects sympathetic arousal. Responses decompose into:
+\begin{itemize}
+  \item \textbf{Tonic component} --- slow baseline level.
+  \item \textbf{Phasic component} --- fast event-related peaks after stimuli.
+\end{itemize}
+Decomposition uses \textbf{convex optimization} (e.g.\ cvxEDA library).
+
+For each phasic peak, exams may ask you to identify:
+\begin{enumerate}
+  \item \textbf{Amplitude}
+  \item \textbf{Latency} (stimulus to onset)
+  \item \textbf{Rise time} (onset to peak)
+  \item \textbf{Half-recovery time} (peak to 50\% recovery)
+\end{enumerate}
+
+\section{Artifact detection in R--R intervals}
+
+Physiological streams contain artifacts (movement, missed beats). The lecture presents an algorithm based on quartiles. Given R--R intervals, define:
+\begin{align*}
+\mathrm{QD} &= \frac{Q_3 - Q_1}{2} \\
+\mathrm{MAD} &= \frac{\mathrm{MedianBeat} - 2.9 \cdot \mathrm{QD}}{3} \\
+\mathrm{MED} &= 3.32 \cdot \mathrm{QD} \\
+\mathrm{CBD} &= \frac{\mathrm{MAD} + \mathrm{MED}}{2}
+\end{align*}
+If $|RR_i - RR_{\mathrm{last\_valid}}| > \mathrm{CBD}$, the beat is flagged as an artifact (subject to absolute bounds, e.g.\ 300--2000\,ms).
+
+\paragraph{Worked example (exam style).}
+For intervals $\{795,800,400,810,800,805\}$\,ms, a 400\,ms interval implies heart rate $60000/400 = 150$\,bpm, which is suspiciously high. With $Q_1=795$, $Q_3=805$, median $=800$, one obtains $\mathrm{CBD}\approx 139$\,ms. Since $|400-800| = 400 > \mathrm{CBD}$, the 400\,ms beat is an artifact.
+
+\section{Ground truth and classification}
+
+Affective labels often come from the \textbf{Self-Assessment Manikin (SAM)} for valence, arousal, and dominance, or from basic emotion/stress questionnaires. Classifiers mentioned include Random Forest, SVM, temporal convolutional networks, and transformers on face images.
+
+The biosensor pipeline therefore ends with supervised learning mapping engineered features to affect dimensions or categories. Video and biosensor channels can be fused at feature level (early fusion) or prediction level (late fusion); chatbot lectures return to this theme in a multimodal setting.
+
+\section{Integration with digital characters}
+
+In the full character loop, estimated user affect modulates chatbot prompts, speech prosody, and animation parameters. Conversely, the character's displayed affect must be \emph{synthesized} coherently across face, voice, and text---a theme revisited in speech synthesis (prosody) and animation lectures.
+
+\problem{Common exam traps: confusing action units (facial muscles) with whole-body motion; claiming softmax outputs lie in $[-1,1]$; stating that facial expression analysis is invasive.}

@@ -1,0 +1,67 @@
+\contentsline {chapter}{Abstract}{1}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Course overview}{4}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Assessment}{4}{subsection.1.1.1}%
+\contentsline {section}{\numberline {1.2}The conversational digital character pipeline}{4}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Dialogue trees versus language models}{5}{subsection.1.2.1}%
+\contentsline {section}{\numberline {1.3}Course map}{5}{section.1.3}%
+\contentsline {paragraph}{Part I --- Perception and foundations (L01--L04).}{5}{section*.3}%
+\contentsline {paragraph}{Part II --- Language and speech (L05--L09).}{5}{section*.4}%
+\contentsline {paragraph}{Part III --- Embodiment and agency (L10--L14).}{5}{section*.5}%
+\contentsline {section}{\numberline {1.4}Use cases and motivation}{5}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Historical note on speech synthesis}{6}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Exam orientation}{6}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Affective Computing}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}What is affect?}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Theories of emotion}{7}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}James--Lange theory}{7}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Cannon--Bard theory}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Schachter--Singer (two-factor) theory}{8}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Dimensional models}{8}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Basic emotions}{8}{subsection.2.2.5}%
+\contentsline {section}{\numberline {2.3}Emotion recognition modalities}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Video-based features}{8}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Action Units (AUs)}{8}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Eye blinks and gaze}{8}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Mouth Aspect Ratio (MAR)}{9}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Fidgeting}{9}{subsection.2.4.4}%
+\contentsline {section}{\numberline {2.5}Biosensors}{9}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Cardiac signals}{9}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Skin conductance}{9}{subsection.2.5.2}%
+\contentsline {section}{\numberline {2.6}Artifact detection in R--R intervals}{10}{section.2.6}%
+\contentsline {paragraph}{Worked example (exam style).}{10}{section*.6}%
+\contentsline {section}{\numberline {2.7}Ground truth and classification}{10}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Integration with digital characters}{10}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Deep Learning Preliminaries}{11}{chapter.3}%
+\contentsline {section}{\numberline {3.1}The neural network unit}{11}{section.3.1}%
+\contentsline {paragraph}{Training.}{11}{section*.7}%
+\contentsline {section}{\numberline {3.2}Feedforward networks}{11}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Recurrent Neural Networks (RNNs)}{11}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Uses}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Vanishing gradients and LSTM}{12}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Bidirectional and stacked RNNs}{12}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Encoder--decoder models}{12}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Attention mechanism}{12}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Self-attention and cross-attention}{13}{subsection.3.5.1}%
+\contentsline {paragraph}{Exam calculation pattern.}{13}{section*.8}%
+\contentsline {section}{\numberline {3.6}Transformers}{13}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Positional encoding}{13}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Encoder and decoder stacks}{13}{subsection.3.6.2}%
+\contentsline {section}{\numberline {3.7}Why this matters for digital characters}{14}{section.3.7}%
+\contentsline {chapter}{\numberline {4}Speech Recognition}{15}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Phonetics and pitch}{15}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Feature extraction pipeline}{15}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Windowing and the DFT}{15}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Mel filter bank}{16}{subsection.4.2.2}%
+\contentsline {paragraph}{Worked example (exercise style).}{16}{section*.9}%
+\contentsline {subsection}{\numberline {4.2.3}Augmentation}{16}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Analog-to-digital conversion}{16}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Acoustic modeling architectures}{16}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Encoder--decoder with subsampling}{16}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Connectionist Temporal Classification (CTC)}{16}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}RNN Transducer (RNN-T)}{17}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Whisper}{17}{subsection.4.4.4}%
+\contentsline {section}{\numberline {4.5}Word Error Rate (WER)}{17}{section.4.5}%
+\contentsline {paragraph}{Example.}{17}{section*.10}%
+\contentsline {section}{\numberline {4.6}Prosody connection}{17}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Role in the digital character pipeline}{17}{section.4.7}%

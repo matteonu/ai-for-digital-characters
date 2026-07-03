@@ -1,0 +1,104 @@
+\chapter{Speech Recognition}
+\label{ch:speechrec}
+
+\goal{Convert spoken audio into text by extracting perceptually motivated features and decoding them with neural acoustic models.}
+
+Speech recognition is the entry point of the conversational pipeline: without a reliable transcript, downstream language models cannot run. This lecture connects \textbf{phonetics} (what we hear), \textbf{signal processing} (how we represent audio), and \textbf{sequence models} (how we map features to words).
+
+\section{Phonetics and pitch}
+
+\term{Phones} are speech sounds represented by symbols (ARPAbet or IPA). A word's pronunciation is a \textbf{string of phones}. At the waveform level, periodic voiced sounds have a \textbf{fundamental frequency} $F_0$ (lowest periodic component). \textbf{Pitch} is the perceptual correlate of $F_0$; the relationship is approximately linear below $\sim$1\,kHz and more logarithmic above.
+
+The \textbf{Mel scale} models perceived pitch spacing:
+\[
+\mathrm{Mel} = 1127 \ln\left(1 + \frac{f}{700}\right), \qquad
+f = 700\left(e^{\mathrm{Mel}/1127} - 1\right)
+\]
+\problem{Exam trap: ``The Mel scale is linear in frequency.'' It is logarithmic/perceptual.}
+
+Complex speech sounds sum many sinusoids; a \textbf{spectrum} lists frequency components and amplitudes. A \textbf{spectrogram} plots frequency content over time and is the standard visual representation in tools like Praat.
+
+\section{Feature extraction pipeline}
+
+Speech is non-stationary: frequencies change over time. We therefore analyze \textbf{short frames} rather than the entire utterance at once.
+
+\subsection{Windowing and the DFT}
+
+Audio is cut into overlapping frames (typically \textbf{20--40\,ms} windows with $\sim$50\% hop). A \textbf{Hamming window}
+\[
+w(n) = 0.54 - 0.46\cos\left(\frac{2\pi n}{N-1}\right)
+\]
+tapers frame edges to reduce \textbf{spectral leakage} when discontinuities would otherwise spread energy across bins.
+
+Each windowed frame undergoes the \textbf{Discrete Fourier Transform (DFT)} (often via FFT):
+\[
+X(k) = \sum_{n=0}^{N-1} x(n)\, e^{-j 2\pi kn / N}
+\]
+yielding complex coefficients whose magnitudes form the \textbf{power spectrum} $P(k) = |X(k)|^2/N$.
+
+\subsection{Mel filter bank}
+
+Human hearing is more discriminative at low frequencies. A \textbf{Mel filter bank} applies overlapping \textbf{triangular} filters spaced on the Mel scale (not rectangular filters---another exam trap). Construction:
+\begin{enumerate}
+  \item Convert lower and upper Hz bounds to Mel.
+  \item Place $N+2$ points linearly in Mel for $N$ filters.
+  \item Convert each Mel point back to Hz.
+  \item Map Hz to FFT bins; each filter rises from left neighbor to center, then falls to right neighbor.
+  \item Take the log of filter energies $\rightarrow$ typically $\sim$80-dimensional vector per frame.
+\end{enumerate}
+
+\paragraph{Worked example (exercise style).}
+For 100--2000\,Hz with four filters, six Mel endpoints are computed; converting back yields Hz landmarks approximately 100, 320, 600, 959, 1415, 2000\,Hz. Filter 1 spans 100--320--600\,Hz, filter 2 spans 320--600--959\,Hz, and so on. Exam 2024 used 200--8000\,Hz with three filters and five Mel points---the method is identical, only numbers change.
+
+\subsection{Augmentation}
+
+Training robustness improves with \textbf{time warping}, \textbf{frequency masking}, and \textbf{time masking} of log-Mel features (SpecAugment-style), simulating channel noise and partial occlusions.
+
+\section{Analog-to-digital conversion}
+
+Before feature extraction, microphones produce continuous signals that are \textbf{sampled} (discrete time) and \textbf{quantized} (discrete amplitude levels). Quantization maps real amplitudes to a finite set that can include negative values---it does not force positivity.
+
+\section{Acoustic modeling architectures}
+
+Modern recognizers map sequences of feature frames to sequences of characters or word pieces.
+
+\subsection{Encoder--decoder with subsampling}
+
+Raw frame rate is high relative to word rate. \textbf{Subsampling} (stacking frames, convolutional pooling, or pyramidal RNNs) compresses time before attention or CTC decoding.
+
+\subsection{Connectionist Temporal Classification (CTC)}
+
+CTC aligns frame-level outputs with shorter label sequences using a \textbf{blank} token. Consecutive identical labels collapse after removing blanks. Many alignments map to the same output string; training maximizes total probability over alignments via dynamic programming. \textbf{Independence assumption:} outputs at different times are treated as conditionally independent given audio---simplifying decoding but limiting language modeling unless an external LM is used.
+
+\subsection{RNN Transducer (RNN-T)}
+
+RNN-T adds a \textbf{prediction network} (language model over previous non-blank outputs) and a \textbf{joiner} combining acoustic and linguistic states. Crucially, RNN-T supports \textbf{streaming}: when a blank is emitted, advance the acoustic index; when a non-blank symbol is emitted, advance the label index without consuming new frames. \problem{Exam trap: ``RNN-T is offline only.'' It supports online/streaming decoding.}
+
+\subsection{Whisper}
+
+\textbf{Whisper} is a Transformer encoder--decoder trained on large-scale weakly supervised multilingual data, performing transcription and related tasks in one model. It represents the end-to-end neural approach that largely supersedes hand-crafted HMM pipelines in research and products.
+
+\section{Word Error Rate (WER)}
+
+\goal{Evaluate recognizer output against a reference transcript.}
+
+\[
+\mathrm{WER} = 100 \times \frac{S + D + I}{N_{\mathrm{ref}}}
+\]
+where $S$ = substitutions, $D$ = deletions, $I$ = insertions, and $N_{\mathrm{ref}}$ is the number of words in the reference.
+
+\paragraph{Example.} Reference ``portable form of stores last night so'' (6 words). System ``portable phone upstairs last night so'' has two substitutions $\rightarrow \mathrm{WER} = 100 \times 2/6 \approx 33.3\%$.
+
+WER is simple and widely used but overweight function words; semantic error rate is desirable but harder to standardize.
+
+To compare two systems, matched-pair statistical tests on sentence segments exist, but WER alone remains the default metric in lectures and exercises.
+
+\section{Prosody connection}
+
+Although recognition focuses on lexical content, slides note that \textbf{prosody} (pitch, duration, loudness, rhythm) affects both human perception and downstream synthesis. Prosody is \emph{not} purely spectral---exam MC statements claiming otherwise are false.
+
+\section{Role in the digital character pipeline}
+
+Speech recognition output feeds the chatbot module; confidence scores and timing can inform turn-taking. Errors propagate: a misrecognized word can derail LLM reasoning, which is why robust front-ends and domain adaptation (custom vocabularies) matter in deployment. The next lectures address how the chatbot generates text and how synthesis reconstructs expressive speech from that text.
+
+\problem{Summary of common MC traps for this chapter: Mel filters are triangular; fundamental frequency is the \emph{lowest} prominent frequency, not the highest; WER insertion vs deletion definitions; RNN-T streaming support.}

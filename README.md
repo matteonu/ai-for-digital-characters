@@ -22,12 +22,17 @@ Import the CSV files from `anki/decks/` into Anki (Tab separator, HTML enabled).
 
 See `anki/PROCESS.md`, `anki/SCHEDULE.md`, and `anki/DECK_SUMMARIES.md` for the study workflow and per-deck overviews.
 
-## Slide summaries (PDF)
+## Slide summaries
 
-Condensed lecture summaries are in `summaries/pdfs/` (one PDF per lecture + combined file).
+**NetSec-style prose summary (recommended):**
+- Part 1 (L01–L04): [`summaries/AIDC_Summary_L01-L04.pdf`](summaries/AIDC_Summary_L01-L04.pdf)
+- LaTeX source: `summaries/latex/` — compile with `latexmk -pdf main.tex`
+- Production plan: [`summaries/PLAN.md`](summaries/PLAN.md)
+
+**Quick bullet review PDFs** (older format): `summaries/pdfs/`
 
 ```bash
-cd summaries && python3 generate_slide_summary_pdfs.py
+cd summaries/latex && latexmk -pdf main.tex
 ```
 
 ## Large files (not in repo)

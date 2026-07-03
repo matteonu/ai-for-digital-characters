@@ -1,0 +1,135 @@
+\chapter{Deep Learning Preliminaries}
+\label{ch:deeplearning}
+
+\goal{Provide the neural network foundations needed for speech, language, and animation models used later in the course.}
+
+\section{The neural network unit}
+
+A single computational \term{neuron} (unit) performs two steps:
+\begin{align*}
+z &= \mathbf{w}^\top \mathbf{x} + b \\
+a &= \sigma(z)
+\end{align*}
+where $\mathbf{x}$ is the input vector, $\mathbf{w}$ weights, $b$ bias, and $\sigma$ a nonlinear \textbf{activation function}. Without nonlinearity, stacking layers would collapse to one linear map.
+
+Common activations:
+\begin{itemize}
+  \item \textbf{ReLU:} $\max(0, z)$ --- default in hidden layers; cheap and avoids vanishing gradients for positive inputs.
+  \item \textbf{Sigmoid:} maps to $(0,1)$ --- historically common; outputs interpreted as probabilities.
+  \item \textbf{Softmax:} normalizes a vector to a probability distribution summing to 1 --- used in multi-class classification and language model output layers.
+\end{itemize}
+
+\paragraph{Training.} A network is trained by minimizing a \textbf{loss} (e.g.\ cross-entropy for classification) via \textbf{backpropagation}: gradients flow backward through activations using the chain rule. \problem{Exam trap: claiming backprop gradients are independent of activation functions. They are not.}
+
+\section{Feedforward networks}
+
+A typical \textbf{two-layer network} computes hidden activations $\mathbf{h} = \mathrm{ReLU}(\mathbf{W}\mathbf{x}+\mathbf{b})$ and outputs $\hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{U}\mathbf{h})$. Applications in the course include sentiment classification and next-word prediction.
+
+\section{Recurrent Neural Networks (RNNs)}
+
+\goal{Model sequences by maintaining a hidden state that summarizes past inputs.}
+
+Many character-related tasks are sequential: tokens in text, frames in audio/video, motor commands over time. An RNN updates
+\begin{align*}
+\mathbf{h}_t &= \sigma(\mathbf{U}\mathbf{h}_{t-1} + \mathbf{W}\mathbf{x}_t) \\
+\mathbf{y}_t &= f(\mathbf{V}\mathbf{h}_t)
+\end{align*}
+with shared parameters $(\mathbf{U}, \mathbf{W}, \mathbf{V})$ across time steps. Intuitively, $\mathbf{h}_t$ is a compressed memory of $(\mathbf{x}_1,\ldots,\mathbf{x}_t)$.
+
+\subsection{Uses}
+
+\begin{itemize}
+  \item \textbf{Language modeling:} predict $P(x_{t+1}\mid x_1,\ldots,x_t)$.
+  \item \textbf{Sequence classification:} use final hidden state $\mathbf{h}_T$ (e.g.\ sentiment).
+  \item \textbf{Generation:} autoregressively sample tokens until end-of-sequence.
+\end{itemize}
+
+Training uses \textbf{backpropagation through time (BPTT)} by unrolling the network. \textbf{Teacher forcing} feeds the ground-truth previous token during training; at inference the model feeds its own predictions, which can cause exposure bias.
+
+\subsection{Vanishing gradients and LSTM}
+
+Standard RNNs struggle with \textbf{long-range dependencies} because gradients shrink when multiplied through many time steps (\textbf{vanishing gradient problem}). \textbf{LSTM} modules mitigate this with a \textbf{cell state} and gating:
+\begin{itemize}
+  \item \textbf{Forget gate} --- what to erase from memory.
+  \item \textbf{Input gate} --- what new information to write.
+  \item \textbf{Output gate} --- what to expose as $\mathbf{h}_t$.
+\end{itemize}
+The cell state acts as a highway along which information can flow with less attenuation.
+
+\subsection{Bidirectional and stacked RNNs}
+
+A \textbf{bidirectional RNN} runs one RNN left-to-right and another right-to-left, concatenating hidden states so each position sees future and past context. This is useful for encoding (e.g.\ speech frames) but not for autoregressive decoding.
+
+\textbf{Stacked RNNs} add depth by feeding hidden states of one layer as inputs to the next.
+
+\problem{Exam trap: RNNs process all time steps in parallel like Transformers. They do not; they are sequential.}
+
+\section{Encoder--decoder models}
+
+Machine translation and dialogue motivated \textbf{encoder--decoder} architectures: an encoder RNN (or Transformer) compresses input $(x_1,\ldots,x_T)$ into a context representation; a decoder generates output $(y_1,\ldots,y_m)$ one token at a time:
+\[
+p(\mathbf{y}\mid\mathbf{x}) = \prod_{m} p(y_m \mid y_1,\ldots,y_{m-1}, \mathbf{x})
+\]
+
+The decoder is initialized from the encoder's final state (or cross-attends to all encoder states in Transformer models). Encoder and decoder may use different parameters and architectures (LSTM, CNN, Transformer).
+
+\section{Attention mechanism}
+
+\goal{Allow decoders to focus on relevant parts of the input instead of bottling everything into one fixed vector.}
+
+RNN encoder--decoders force all source information through a single context vector $\mathbf{h}_T$, which is painful for long sentences. \textbf{Attention} assigns a weight to each source position when producing each target token.
+
+Given query $\mathbf{q} \in \mathbb{R}^d$ and keys/values $(\mathbf{k}_t, \mathbf{v}_t)$:
+\begin{align*}
+s_t &= \frac{\mathbf{q}^\top \mathbf{k}_t}{\sqrt{d}} \quad \text{(scaled dot-product)} \\
+a_t &= \frac{\exp(s_t)}{\sum_{t'} \exp(s_{t'})} \\
+\mathbf{c} &= \sum_t a_t \mathbf{v}_t
+\end{align*}
+Scaling by $\sqrt{d}$ prevents dot products from growing too large, which would push softmax into saturated regions with tiny gradients.
+
+\subsection{Self-attention and cross-attention}
+
+\begin{itemize}
+  \item \textbf{Self-attention:} $\mathbf{Q}, \mathbf{K}, \mathbf{V}$ all come from the same sequence (encoder or masked decoder).
+  \item \textbf{Cross-attention:} queries from decoder attend to encoder keys/values.
+\end{itemize}
+
+\textbf{Multi-head attention} runs several attention operations in parallel so the model can capture different relationship types (syntax vs.\ semantics).
+
+\paragraph{Exam calculation pattern.} You may be given numeric $\mathbf{q}$ and $\mathbf{x}_t$ and asked for scores, softmax weights, and context vector. Always show: dot products $\rightarrow$ scale $\rightarrow$ softmax $\rightarrow$ weighted sum.
+
+\section{Transformers}
+
+Transformers replace recurrence with attention entirely. Because self-attention is \textbf{permutation-invariant}, positional information must be injected.
+
+\subsection{Positional encoding}
+
+Sinusoidal encodings add to token embeddings:
+\begin{align*}
+\mathrm{PE}(t, 2i) &= \sin\left(t / 10000^{2i/d}\right) \\
+\mathrm{PE}(t, 2i+1) &= \cos\left(t / 10000^{2i/d}\right)
+\end{align*}
+Each position receives a unique pattern across dimensions. Simplified exam versions may use $\mathrm{PE}(t,0)=\sin(t)$, $\mathrm{PE}(t,1)=\cos(t)$.
+
+\subsection{Encoder and decoder stacks}
+
+Each layer typically contains:
+\begin{itemize}
+  \item Multi-head self-attention
+  \item Position-wise feed-forward network
+  \item Residual connections and \textbf{layer normalization}
+\end{itemize}
+
+The \textbf{decoder} uses \textbf{masked} self-attention so position $t$ cannot attend to future positions---at test time those tokens are unknown. Then decoder layers \textbf{cross-attend} to encoder outputs.
+
+\problem{Exam trap: positional encoding encodes token \emph{content}. It encodes \emph{position} only.}
+
+\section{Why this matters for digital characters}
+
+Speech recognition (Whisper), chatbots (GPT-style decoders), speech synthesis (Tacotron/FastSpeech attention or FFT blocks), and animation models (Transformers for faces) all inherit these primitives. Later chapters assume you can:
+\begin{enumerate}
+  \item Explain why attention beats a single context vector.
+  \item Compute a small attention example by hand.
+  \item Contrast RNN sequential processing with Transformer parallelism.
+  \item Describe LSTM's role against vanishing gradients.
+\end{enumerate}
