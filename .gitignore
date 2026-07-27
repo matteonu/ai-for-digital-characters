@@ -3,6 +3,14 @@ __pycache__/
 *.pyc
 *.pyo
 
+# LaTeX build artifacts (latexmk regenerates these)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+
 # GitHub file size limit is 100 MB
 exercises/Project/Unity Template.zip
 Exercises-20260620.zip

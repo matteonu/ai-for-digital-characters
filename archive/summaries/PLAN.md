@@ -1,10 +1,23 @@
 # AIDC Lecture Summary — Production Plan
 
+> ## ⚠️ SHELVED — 2026-07-27
+>
+> Exam is **17 August 2026** with a **2 h/day** study budget (~42 h total). An 80-page prose summary
+> is the wrong use of that budget for a closed-book exam where the goal is to pass.
+>
+> **Active plan is now [`cram/PLAN.md`](../cram/PLAN.md).** Chapters 5–14, figure extraction, and the
+> appendix are cancelled. Chapters 1–4 remain compiled at `summaries/AIDC_Summary_L01-L04.pdf` and are
+> still useful reading for L01–L04 if time allows — which it probably won't.
+>
+> Nothing below this line is being worked on. Kept for after the exam.
+
+---
+
 **Target style:** [NetSec summary](https://github.com/ymerkli/eth-summaries) — prose lecture script, not bullet cheat sheet.
 
 **Output:** `summaries/latex/AIDC_Lecture_Summary.pdf`
 
-**Status:** Chapters 1–4 drafted (L01–L04). Awaiting review before L05–L14.
+**Status:** Chapters 1–4 drafted (L01–L04). Cancelled before L05–L14.
 
 ---
 
