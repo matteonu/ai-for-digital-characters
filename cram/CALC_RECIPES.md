@@ -39,6 +39,10 @@ drill them once each in week 3, not before.
 
 ## 1. Scaled dot-product attention
 
+*Attention lets a model decide which parts of the input matter right now. You score every input vector
+against a query, squash those scores into weights that sum to 1, and return a weighted average of the
+inputs — so relevant positions dominate the result.*
+
 **Three steps, always the same:** scores → softmax → weighted sum.
 
 $$
@@ -82,6 +86,10 @@ arithmetic error; say so and continue. When keys and values aren't given separat
 
 ## 2. Sinusoidal positional encoding
 
+*A Transformer sees all tokens at once and has no built-in sense of order — "dog bites man" and "man
+bites dog" would look identical. Positional encoding adds a fixed sine/cosine pattern to each embedding
+so every position gets a distinct fingerprint.*
+
 $$
 PE_{(pos,\,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d}}\right)
 \qquad
@@ -111,6 +119,10 @@ $$
 ---
 
 ## 3. Mel filter banks
+
+*Humans hear pitch logarithmically — the jump from 100 to 200 Hz sounds enormous, 5000 to 5100 Hz sounds
+like nothing. Mel filter banks chop the spectrum into bands spaced to match that perception, narrow at
+low frequencies and wide at high ones, so the features keep what a listener actually notices.*
 
 $$
 m = 1127 \ln\!\left(1 + \frac{f}{700}\right)
@@ -150,6 +162,9 @@ your original bounds; if they don't, you inverted the formula wrong.
 
 ## 4. Word Error Rate
 
+*The standard accuracy score for a speech recognizer: what fraction of the reference words it got wrong,
+counting the three ways it can fail — swapping a word, dropping one, or inventing one.*
+
 $$
 \text{WER} = \frac{S + I + D}{N}
 $$
@@ -177,6 +192,9 @@ inflection (`jump` vs `jumps`) is a substitution, not a match.
 
 ## 5. Power spectrum
 
+*After a DFT converts a slice of audio into frequency components, the power spectrum says how much energy
+sits at each frequency. It's the raw material the Mel filters then summarize into bands.*
+
 $$
 P(k) = \frac{|X(k)|^2}{N}
 $$
@@ -199,6 +217,10 @@ phonemes together.
 ---
 
 ## 6. Top-p (nucleus) and top-k sampling
+
+*A language model assigns a probability to every possible next token, and most of them are garbage.
+These are the rules for which tokens are even allowed to be sampled: a fixed number of the best ones
+(top-k), or however many it takes to accumulate probability mass p (top-p).*
 
 **top-k:** keep the $k$ highest-probability tokens.
 **top-p:** keep the smallest set $V^{(p)}$ such that
@@ -225,6 +247,10 @@ is the classic wrong answer.
 
 ## 7. Cosine similarity
 
+*Measures how alike two embedding vectors are by the angle between them, ignoring their lengths — so a
+long document and a short one about the same topic still count as similar. 1 = same direction,
+0 = unrelated.*
+
 $$
 \cos(\mathbf{A}, \mathbf{B}) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\|\,\|\mathbf{B}\|}
 = \frac{\sum_i A_i B_i}{\sqrt{\sum_i A_i^2}\,\sqrt{\sum_i B_i^2}}
@@ -244,6 +270,10 @@ $$\cos = \frac{0.27}{0.6481 \times 0.5099} = \frac{0.27}{0.3305} = \mathbf{0.82}
 
 ## 8. Perplexity
 
+*How surprised a language model is by a piece of text — roughly, how many equally-likely options it felt
+it was choosing between at each token. A perplexity of 6 means it was about as uncertain as picking
+blindly from 6 words. Lower means it predicted the text better.*
+
 $$
 \text{PPL} = \left(\prod_{i=1}^{N} p_i\right)^{-1/N}
 = \exp\!\left(-\frac{1}{N}\sum_{i=1}^{N} \ln p_i\right)
@@ -260,6 +290,10 @@ $$\text{PPL} = 0.00075^{-1/4} = \mathbf{6.04}$$
 ---
 
 ## 9. TransE
+
+*A way of storing a knowledge graph as vectors so that relations become translations in space: starting
+at "Dr. Clark" and stepping by the "supervises" vector should land you on "Mark". The score is simply how
+far off you land — which also lets you guess edges the graph never recorded.*
 
 $$
 \text{score}(h, r, t) = \|\mathbf{h} + \mathbf{r} - \mathbf{t}\|
@@ -298,6 +332,9 @@ indistinguishable. TransE therefore cannot represent symmetric relations.
 
 ## 10. SPARQL
 
+*The query language for RDF knowledge graphs — SQL, but for triples. You write the pattern of triples you
+want and it returns every entity matching that shape.*
+
 Pattern for "find $X$ such that A **and** B **and** C" — one triple pattern per condition, sharing the variable:
 
 ```sparql
@@ -318,6 +355,9 @@ One relation hop is a one-hop query; chained relations form a path query.
 
 ## 11. Heart rate from R-R interval
 
+*The R-R interval is the gap between two consecutive heartbeats, read off an ECG. Converting it to beats
+per minute is just a change of units.*
+
 $$
 \text{HR}\;[\text{bpm}] = \frac{60000}{\text{RR}\;[\text{ms}]}
 $$
@@ -328,6 +368,10 @@ $$
 ---
 
 ## 12. Artifact detection (Criterion Beat Difference)
+
+*Heart sensors occasionally miss a beat or count one twice, producing an interval that is physiologically
+impossible. This algorithm builds a tolerance band from how much the surrounding beats normally vary, then
+flags anything falling outside it — otherwise one bad reading wrecks the HRV downstream.*
 
 The formulas are **given on the exam paper** — you only need the order of operations.
 
@@ -368,6 +412,11 @@ caught it — say this.
 ---
 
 ## 13. Inverse kinematics — one Jacobian step
+
+*Forward kinematics is easy: given the joint angles, work out where the hand ends up. Inverse kinematics
+is the useful direction — what angles put the hand on a target? There's no clean formula, so you nudge the
+angles in whatever direction shrinks the error and repeat. The Jacobian says how the hand moves when each
+joint rotates; one exam question = one nudge.*
 
 **This is 10 points in both papers and the pseudoinverse is handed to you.** Five sub-steps:
 
@@ -428,6 +477,9 @@ reverse. Don't forget to multiply by $\alpha$. The step (v) answer stays in radi
 
 ## 14. Neural network unit (ReLU)
 
+*One artificial neuron, the building block everything else is made of: take a weighted sum of the inputs,
+add a bias, then pass it through a nonlinearity that clips anything negative to zero.*
+
 $$
 z = \mathbf{w}^\top\mathbf{x} + b
 \qquad
@@ -446,6 +498,10 @@ assume you made a mistake.
 ---
 
 ## 15. HRV as standard deviation
+
+*A healthy heart is never perfectly metronomic, and the size of that irregularity reflects your autonomic
+state. Here it's quantified as the standard deviation of a heart-rate sequence — bigger spread means more
+variability.*
 
 $$
 \sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(x_i - \bar{x}\right)^2}
@@ -469,6 +525,10 @@ system; **lower** HRV means stress, anxiety, reduced flexibility.
 ---
 
 ## 16. Fidgeting / motion energy
+
+*Measures how much someone is squirming on camera. Subtract a slowly-updated "what the scene looks like
+when still" background from the current frame, count how many pixels changed appreciably, and that
+percentage is the fidgeting score.*
 
 Four steps on a frame $f$ against a running background $b$:
 
@@ -497,6 +557,10 @@ Use the absolute value: motion counts in either direction.
 ---
 
 ## 17. tf-idf retrieval scoring
+
+*Ranks documents against a search query by weighting words two ways at once: appearing often inside a
+document is evidence for it, but appearing in every document makes a word worthless for telling them
+apart. Each document becomes a vector of those weights, then you compare angles.*
 
 $$
 \text{tf}_{t,d} = \begin{cases}1 + \log_{10}\text{count}(t,d) & \text{if } \text{count}(t,d) > 0\\[2pt] 0 & \text{otherwise}\end{cases}
