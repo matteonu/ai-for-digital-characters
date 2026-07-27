@@ -53,7 +53,13 @@ a_t = \frac{e^{s_t}}{\sum_{i} e^{s_i}}
 \mathbf{c} = \sum_t a_t \mathbf{x}_t
 $$
 
-where $d$ is the dimension of the vectors.
+**where:**
+- $\mathbf{q}$ — the **query** vector: what we are currently looking for
+- $\mathbf{x}_t$ — the $t$-th **input** vector we are comparing against (serves as both key and value here)
+- $d$ — the dimension of those vectors (how many numbers each one has)
+- $s_t$ — the raw **similarity score** between the query and input $t$
+- $a_t$ — the **attention weight** for input $t$ after softmax; all weights sum to $1$
+- $\mathbf{c}$ — the **context vector**, the final answer: a blend of the inputs
 
 **Worked (exam 2024 Q3):**
 
@@ -96,7 +102,14 @@ PE_{(pos,\,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d}}\right)
 PE_{(pos,\,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d}}\right)
 $$
 
-Then **add** it to the token embedding (not concatenate): $\mathbf{x}'_{pos} = \mathbf{x}_{pos} + PE_{pos}$.
+**where:**
+- $pos$ — the **position index** of the token in the sequence ($0$ for the first token, $1$ for the second, …)
+- $i$ — the **dimension-pair index**: $i=0$ covers embedding dimensions $0$ and $1$, $i=1$ covers $2$ and $3$, …
+- $d$ — the **embedding dimension** (length of each token vector)
+- $PE_{(pos,\,j)}$ — the number added to dimension $j$ of the token sitting at position $pos$
+
+Then **add** it to the token embedding (not concatenate): $\mathbf{x}'_{pos} = \mathbf{x}_{pos} + PE_{pos}$,
+where $\mathbf{x}_{pos}$ is the original embedding and $\mathbf{x}'_{pos}$ the position-aware one.
 
 **Worked (exam 2025 Q3b i):** $\mathbf{x}_0 = [1, 2]^\top$, $\mathbf{x}_1 = [3, 4]^\top$, $d = 2$.
 
@@ -129,6 +142,13 @@ m = 1127 \ln\!\left(1 + \frac{f}{700}\right)
 \qquad\qquad
 f = 700\left(e^{m/1127} - 1\right)
 $$
+
+**where:**
+- $f$ — a frequency in **Hertz** (the physical scale)
+- $m$ — the same frequency in **Mel** (the perceptual scale)
+- $n$ — the number of filters you are asked to build
+- $m_\text{low}$, $m_\text{high}$ — the lower and upper frequency bounds converted to Mel
+- $m_i$ — the $i$-th evenly spaced point, $i = 0, 1, \ldots, n+1$
 
 **Five steps:**
 
@@ -169,8 +189,11 @@ $$
 \text{WER} = \frac{S + I + D}{N}
 $$
 
-where $N$ is the number of words in the **reference**, and $S$, $I$, $D$ are substitutions, insertions
-and deletions.
+**where:**
+- $N$ — the number of words in the **reference** (the correct transcript), *not* in the output
+- $S$ — **substitutions**: the system produced a different word in place of the right one
+- $I$ — **insertions**: the system added a word that isn't in the reference
+- $D$ — **deletions**: the system dropped a word that should be there
 
 **Worked (exam 2025 Q4a):**
 
@@ -199,7 +222,12 @@ $$
 P(k) = \frac{|X(k)|^2}{N}
 $$
 
-where $N$ is the DFT length.
+**where:**
+- $k$ — the **frequency bin index**, i.e. which frequency slot you're looking at
+- $X(k)$ — the **DFT coefficient** at bin $k$ (a complex number in general)
+- $|X(k)|$ — its magnitude; squaring it gives energy
+- $N$ — the **DFT length** = the number of samples in the frame
+- $P(k)$ — the resulting **power** at bin $k$
 
 **Worked (exam 2025 Q4b i):** $X = [0,\,1,\,5]$, $N = 3$:
 
@@ -226,6 +254,13 @@ These are the rules for which tokens are even allowed to be sampled: a fixed num
 **top-p:** keep the smallest set $V^{(p)}$ such that
 
 $$\sum_{t \in V^{(p)}} P(t) \;\ge\; p$$
+
+**where:**
+- $t$ — a candidate **token** (a possible next word)
+- $P(t)$ — the probability the model assigned to token $t$
+- $k$ — how many tokens to keep, **fixed in advance** (top-k)
+- $p$ — the **cumulative probability mass** to reach, e.g. $0.85$ (top-p)
+- $V^{(p)}$ — the resulting **candidate set** you sample from
 
 so its size adapts to the shape of the distribution.
 
@@ -256,6 +291,12 @@ $$
 = \frac{\sum_i A_i B_i}{\sqrt{\sum_i A_i^2}\,\sqrt{\sum_i B_i^2}}
 $$
 
+**where:**
+- $\mathbf{A}$, $\mathbf{B}$ — the two vectors being compared (here sentence embeddings $\mathbf{e}_A$, $\mathbf{e}_B$)
+- $A_i$, $B_i$ — the $i$-th component (single number) of each vector
+- $\mathbf{A} \cdot \mathbf{B}$ — the **dot product**: multiply componentwise, then add up
+- $\|\mathbf{A}\|$ — the **length** (norm) of the vector: $\sqrt{\sum_i A_i^2}$
+
 **Worked (exam 2025 Q5c i):** $\mathbf{e}_A = [0.5,\,0.1,\,0.4]$, $\mathbf{e}_B = [0.4,\,0.3,\,0.1]$.
 
 $$\mathbf{e}_A \cdot \mathbf{e}_B = (0.5)(0.4) + (0.1)(0.3) + (0.4)(0.1) = 0.20 + 0.03 + 0.04 = 0.27$$
@@ -279,6 +320,11 @@ $$
 = \exp\!\left(-\frac{1}{N}\sum_{i=1}^{N} \ln p_i\right)
 $$
 
+**where:**
+- $p_i$ — the probability the model assigned to the **$i$-th token of the sentence** (given everything before it)
+- $N$ — the **number of tokens** in the sentence
+- $\prod$ — multiply all of them together; $\sum \ln$ — the equivalent log form, safer on a calculator
+
 **Worked (exam 2025 Q5c ii):** $p = [0.20,\,0.10,\,0.15,\,0.25]$, $N = 4$.
 
 $$\prod_i p_i = 0.20 \times 0.10 \times 0.15 \times 0.25 = 0.00075$$
@@ -299,7 +345,16 @@ $$
 \text{score}(h, r, t) = \|\mathbf{h} + \mathbf{r} - \mathbf{t}\|
 $$
 
-using the $L_2$ norm — **lower is more plausible**, because a true triple should satisfy $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$.
+**where:** a knowledge graph fact is a **triple** $(h, r, t)$ read as *"head, relation, tail"* — e.g.
+(Dr. Clark, supervises, Mark). Each part has a learned vector:
+
+- $\mathbf{h}$ — the **head** entity's embedding: the thing the fact is *about* (Dr. Clark)
+- $\mathbf{r}$ — the **relation**'s embedding: the arrow connecting them (supervises)
+- $\mathbf{t}$ — the **tail** entity's embedding: the thing the fact points *to* (Mark)
+- $\|\cdot\|$ — the $L_2$ **norm**, i.e. the length of the leftover vector: $\sqrt{v_1^2 + v_2^2 + v_3^2}$
+
+**Lower is more plausible**, because a true triple should satisfy $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ —
+starting at the head and stepping along the relation should land you on the tail, leaving nothing left over.
 
 **Worked (exam 2025 Q7c i):**
 
@@ -335,6 +390,13 @@ indistinguishable. TransE therefore cannot represent symmetric relations.
 *The query language for RDF knowledge graphs — SQL, but for triples. You write the pattern of triples you
 want and it returns every entity matching that shape.*
 
+**Syntax, where:**
+- `?name` — a **variable**; anything starting with `?` is a slot to be filled in
+- `SELECT ?x` — which variable(s) to return as the answer
+- each line inside `WHERE { }` is a **triple pattern**: `subject predicate object .`
+- `uni:` — a **prefix**, a namespace shorthand so relations read `uni:published`
+- a quoted `"literal"` is a fixed value; a `?variable` in the same slot means "anything"
+
 Pattern for "find $X$ such that A **and** B **and** C" — one triple pattern per condition, sharing the variable:
 
 ```sparql
@@ -362,6 +424,11 @@ $$
 \text{HR}\;[\text{bpm}] = \frac{60000}{\text{RR}\;[\text{ms}]}
 $$
 
+**where:**
+- $\text{RR}$ — the **R-R interval** in milliseconds: the time between two consecutive R peaks (heartbeats) on an ECG
+- $\text{HR}$ — **heart rate** in beats per minute
+- $60000$ — just the number of milliseconds in a minute ($60 \times 1000$)
+
 **Worked:** $\text{RR} = 400$ ms $\Rightarrow \text{HR} = \dfrac{60000}{400} = \mathbf{150}$ bpm.
 (Free point. Do not miss it.)
 
@@ -386,6 +453,14 @@ $$
 $$
 CBD = \frac{MAD + MED}{2}
 $$
+
+**where:**
+- $Q_1$, $Q_3$ — the **first and third quartiles** of the R-R sequence (median of the lower half / upper half)
+- $\text{Median}$ — the middle value of the sequence
+- $QD$ — **Quartile Deviation**: half the spread between the quartiles, a robust measure of normal variation
+- $MAD$, $MED$ — two intermediate quantities; the constants $2.9$, $3$ and $3.32$ are given, don't derive them
+- $CBD$ — **Criterion Beat Difference**: the final tolerance threshold
+- $\text{RR}_\text{last valid}$ — the most recent beat interval already accepted as genuine
 
 A beat is an artifact if $\;|\text{RR} - \text{RR}_\text{last valid}| > CBD\;$ (or if it falls outside the
 $300$–$2000$ ms validity range).
@@ -434,7 +509,22 @@ $$
 \text{(v)}\;\; \boldsymbol\theta^{1} = \boldsymbol\theta^{0} + \Delta\boldsymbol\theta
 $$
 
-For a planar arm, writing $c_1 = \cos\theta_1$, $c_{12} = \cos(\theta_1+\theta_2)$, $s_{12} = \sin(\theta_1+\theta_2)$, …
+**where:**
+- $\boldsymbol\theta = [\theta_1, \theta_2, \theta_3]$ — the **joint angles**, in radians. These are the unknowns you're solving for
+- $L_1, L_2, L_3$ — the **link lengths**, i.e. how long each bone segment is. Given, fixed
+- $\mathbf{e}$ — the **end-effector** position $[x, y]$: the tip of the arm, the "hand"
+- $F(\boldsymbol\theta)$ — the **forward kinematics** function: plug in angles, get the hand position out
+- $\mathbf{e}^0$ — where the hand **currently is**, at step $t = 0$ (superscript = time step, not a power)
+- $\mathbf{e}^*$ — the **target**: where you want the hand to end up (the ball, in the exam). The star means "desired"
+- $\Delta\mathbf{e}$ — the **error**: how far the hand is from the target, and in which direction
+- $J$ — the **Jacobian**: how much the hand moves for a small rotation of each joint ($\partial\mathbf{e}/\partial\boldsymbol\theta$)
+- $J^{+}$ — the **pseudoinverse** of $J$, running the relationship backwards: given a desired hand motion, which joint rotations produce it. **Given to you on the exam**
+- $\alpha$ — the **step size** (learning rate), e.g. $0.1$. Keeps the nudge small, since the linear approximation only holds locally
+- $\Delta\boldsymbol\theta$ — the resulting **change in joint angles**
+- $\boldsymbol\theta^{1}$ — the **updated angles** after one step
+
+For a planar arm, writing $c_1 = \cos\theta_1$, $c_{12} = \cos(\theta_1+\theta_2)$, $s_{12} = \sin(\theta_1+\theta_2)$
+(so subscripts just say **which angles were summed** before taking cos/sin):
 
 $$
 \mathbf{e} = \begin{bmatrix}
@@ -486,6 +576,13 @@ z = \mathbf{w}^\top\mathbf{x} + b
 \text{ReLU}(z) = \max(0,\, z)
 $$
 
+**where:**
+- $\mathbf{x}$ — the **input** vector to the neuron
+- $\mathbf{w}$ — the **weights**, one per input: how much each input counts
+- $b$ — the **bias**, a constant offset added regardless of input
+- $z$ — the **pre-activation**: the weighted sum before the nonlinearity
+- $\text{ReLU}$ — the **activation function**: passes positives through unchanged, clips negatives to $0$
+
 **Worked (Exercise 1, 3b):** $\mathbf{w} = [2.2,\,-3,\,1.5]$, $\mathbf{x} = [0,\,5,\,8]$, $b = 3$.
 
 $$z = (2.2)(0) + (-3)(5) + (1.5)(8) + 3 = 0 - 15 + 12 + 3 = 0$$
@@ -506,6 +603,12 @@ variability.*
 $$
 \sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(x_i - \bar{x}\right)^2}
 $$
+
+**where:**
+- $x_i$ — the $i$-th **measurement** in the sequence (a heart-rate value, or an R-R interval)
+- $\bar{x}$ — the **mean** of the sequence: add them all up, divide by $N$
+- $N$ — how many values there are
+- $\sigma$ — the **standard deviation**: the typical distance of a value from the mean
 
 Divide by $N$, **not** $N-1$.
 
@@ -544,6 +647,17 @@ $$
 \text{(4)}\;\; b' = (1-\alpha)\,b + \alpha\,f
 $$
 
+**where:**
+- $f$ — the **current frame** (a grid of pixel brightness values)
+- $b$ — the **background**: a slowly-updated model of the scene when nothing is moving
+- $(i,j)$ — a **pixel position**, row $i$ column $j$
+- $f_\text{temp}$ — the raw **difference** between frame and background
+- $t$ — the **threshold**: how big a difference counts as real motion rather than sensor noise
+- $f_\text{binary}$ — the difference after thresholding: $1$ = pixel moved, $0$ = didn't
+- $E$ — the **energy**: the percentage of pixels that moved — the fidgeting score
+- $\alpha$ — the **update rate**: how fast the background absorbs the current frame ($0.2$ = 20% new, 80% old)
+- $b'$ — the **updated background**, used for the next frame
+
 **Worked (Exercise 1, 2c):** with $t = 5$, one pixel of the $3\times3$ difference fell at or below
 threshold, leaving $8$ survivors:
 
@@ -574,7 +688,15 @@ $$
 \text{score}(q,d) = \sum_{t \in q} \frac{\text{tf-idf}(t,q)}{\sqrt{\sum_{q_i \in q}\text{tf-idf}^2(q_i,q)}} \cdot \frac{\text{tf-idf}(t,d)}{\sqrt{\sum_{d_i \in d}\text{tf-idf}^2(d_i,d)}}
 $$
 
-where $N$ is the number of documents and $\text{df}_t$ the number containing term $t$.
+**where:**
+- $t$ — a single **term** (word) — note this is *not* a threshold or time index here
+- $d$ — a **document** being scored; $q$ — the **query** you're searching with
+- $\text{count}(t,d)$ — how many times term $t$ appears in document $d$
+- $N$ — the **total number of documents** in the collection
+- $\text{df}_t$ — **document frequency**: in how many documents term $t$ appears at least once
+- $\text{tf}_{t,d}$ — **term frequency**, dampened by a log so 100 occurrences isn't 100× one
+- $\text{idf}_t$ — **inverse document frequency**: high for rare, discriminative terms; $0$ for terms in every document
+- the two square-root denominators — **normalization factors**, the vector lengths that turn the dot product into a cosine
 
 **Worked (Exercise 2, 3b):** query *"deep learning transformers"*, $N = 3$ documents.
 
