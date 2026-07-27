@@ -6,8 +6,11 @@ Drill with fresh numbers here instead.
 
     python3 drill.py                 # one problem from each recipe
     python3 drill.py attention ik    # only these recipes
-    python3 drill.py --answers       # show worked solutions
-    python3 drill.py --seed 7        # reproducible set
+    python3 drill.py --seed 7        # pin these exact numbers
+    python3 drill.py --seed 7 --answers      # ... and check them
+
+Every run prints the seed it used, plus the exact command to get the same
+problems back with solutions. Re-running without that seed gives new numbers.
 """
 
 from __future__ import annotations
@@ -23,11 +26,19 @@ R = lambda x, n=2: np.round(x, n)
 
 def attention(rng):
     d = rng.choice([2, 3])
-    q = np.array([rng.choice([0, 1, 2]) for _ in range(d)], dtype=float)
-    if not q.any():
-        q[0] = 1.0
-    X = np.array([[rng.choice([0, 1, 2]) for _ in range(d)] for _ in range(3)], dtype=float)
-    s = X @ q / math.sqrt(d)
+    # Reject degenerate draws: a zero query, a zero input vector, or inputs that all score the
+    # same all collapse the softmax to uniform weights, which teaches nothing.
+    for _ in range(100):
+        q = np.array([rng.choice([0, 1, 2]) for _ in range(d)], dtype=float)
+        X = np.array([[rng.choice([0, 1, 2]) for _ in range(d)] for _ in range(3)], dtype=float)
+        s = X @ q / math.sqrt(d)
+        if q.any() and all(row.any() for row in X) and len(set(np.round(s, 6))) > 1:
+            break
+    else:  # pragma: no cover - fall back to the 2024 exam vectors
+        q = np.array([1.0, 0.0, 1.0])
+        X = np.array([[1, 0, 0], [0, 1, 0], [1, 1, 0]], dtype=float)
+        d = 3
+        s = X @ q / math.sqrt(d)
     a = np.exp(s) / np.exp(s).sum()
     c = a @ X
     prob = (
@@ -443,7 +454,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("recipes", nargs="*", help=f"any of: {', '.join(RECIPES)}")
     ap.add_argument("--answers", action="store_true", help="print worked solutions")
-    ap.add_argument("--seed", type=int, help="reproducible problem set")
+    ap.add_argument("--seed", type=int, metavar="NUM",
+                    help="pin the random numbers, e.g. --seed 7 (any integer)")
     args = ap.parse_args()
 
     names = args.recipes or list(RECIPES)
@@ -451,18 +463,21 @@ def main() -> None:
     if unknown:
         ap.error(f"unknown recipe(s): {', '.join(unknown)}. Choose from: {', '.join(RECIPES)}")
 
-    rng = random.Random(args.seed)
+    # Always pin a seed, even when the user didn't give one, and report it. Otherwise re-running
+    # with --answers would silently produce a different problem set than the one just worked on.
+    seed = args.seed if args.seed is not None else random.randrange(10000)
+    rng = random.Random(seed)
+
+    print(f"\nseed {seed}")
     for i, name in enumerate(names, 1):
         prob, ans = RECIPES[name](rng)
-        print(f"\n{'='*66}\n[{i}] {name.upper()}\n{'='*66}\n{prob}")
+        print(f"\n{'='*66}\n[{i}] {name.upper()}   (seed {seed})\n{'='*66}\n{prob}")
         if args.answers:
             print(f"\n  --- solution ---\n{ans}")
 
     if not args.answers:
-        seed_note = f" --seed {args.seed}" if args.seed is not None else ""
-        print(f"\n{'='*66}\nWork them on paper, then re-run with --answers{seed_note} to check.")
-        if args.seed is None:
-            print("(Use --seed N to get the same set back.)")
+        cmd = f"python3 drill.py {' '.join(names)} --seed {seed} --answers"
+        print(f"\n{'='*66}\nCheck with:  {cmd}")
 
 
 if __name__ == "__main__":
