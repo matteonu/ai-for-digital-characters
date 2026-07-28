@@ -100,25 +100,65 @@ def mel(rng):
 _REF = "the quick brown fox jumps over the lazy dog".split()
 
 
+def align_wer(ref: list[str], hyp: list[str]) -> tuple[int, int, int, list[str]]:
+    """Minimum-edit alignment of hyp against ref. Returns (S, I, D, per-word trace).
+
+    WER is defined by the *minimum* edit distance between the two strings, so the counts must
+    come from aligning the final texts -- not from whatever edits were used to build hyp. Those
+    can cancel out (substitute a word, then delete it) and would overcount.
+    """
+    n, m = len(ref), len(hyp)
+    d = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        d[i][0] = i
+    for j in range(m + 1):
+        d[0][j] = j
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            d[i][j] = min(
+                d[i - 1][j] + 1,                                        # deletion
+                d[i][j - 1] + 1,                                        # insertion
+                d[i - 1][j - 1] + (ref[i - 1] != hyp[j - 1]),           # match / substitution
+            )
+
+    s = ins = dele = 0
+    trace: list[str] = []
+    i, j = n, m
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and d[i][j] == d[i - 1][j - 1] + (ref[i - 1] != hyp[j - 1]):
+            if ref[i - 1] != hyp[j - 1]:
+                s += 1
+                trace.append(f"S: '{ref[i-1]}' -> '{hyp[j-1]}'")
+            i, j = i - 1, j - 1
+        elif i > 0 and d[i][j] == d[i - 1][j] + 1:
+            dele += 1
+            trace.append(f"D: '{ref[i-1]}' missing")
+            i -= 1
+        else:
+            ins += 1
+            trace.append(f"I: '{hyp[j-1]}' added")
+            j -= 1
+    return s, ins, dele, list(reversed(trace))
+
+
 def wer(rng):
     ref = _REF[:]
-    hyp = ref[:]
-    ops = []
-    for _ in range(rng.randint(2, 4)):
-        kind = rng.choice(["S", "D", "I"])
-        i = rng.randrange(len(hyp))
-        if kind == "S":
-            hyp[i] = hyp[i] + "s" if not hyp[i].endswith("s") else hyp[i][:-1]
-            ops.append(f"S at '{ref[i] if i < len(ref) else '?'}'")
-        elif kind == "D" and len(hyp) > 3:
-            ops.append(f"D of '{hyp[i]}'")
-            hyp.pop(i)
-        else:
-            hyp.insert(i, "um")
-            ops.append("I of 'um'")
-    s = sum(1 for o in ops if o.startswith("S"))
-    d = sum(1 for o in ops if o.startswith("D"))
-    ins = sum(1 for o in ops if o.startswith("I"))
+    for _ in range(50):
+        hyp = ref[:]
+        for _ in range(rng.randint(2, 4)):
+            kind = rng.choice(["S", "D", "I"])
+            i = rng.randrange(len(hyp))
+            if kind == "S":
+                hyp[i] = hyp[i] + "s" if not hyp[i].endswith("s") else hyp[i][:-1]
+            elif kind == "D" and len(hyp) > 3:
+                hyp.pop(i)
+            else:
+                hyp.insert(i, "um")
+        if hyp != ref:
+            break
+
+    s, ins, dele, trace = align_wer(ref, hyp)
+    total = s + ins + dele
     prob = (
         f"Word Error Rate.\n"
         f"  Reference: {' '.join(ref)}\n"
@@ -126,9 +166,10 @@ def wer(rng):
         f"  Give S, I, D and the WER."
     )
     ans = (
-        f"  N = {len(ref)} (reference length).  Edits applied: {', '.join(ops)}\n"
-        f"  S = {s}, I = {ins}, D = {d}\n"
-        f"  WER = (S+I+D)/N = {s+ins+d}/{len(ref)} = {100*(s+ins+d)/len(ref):.2f} %"
+        f"  N = {len(ref)} (reference length)\n"
+        + "".join(f"    {t}\n" for t in trace)
+        + f"  S = {s}, I = {ins}, D = {dele}\n"
+        f"  WER = (S+I+D)/N = {total}/{len(ref)} = {100*total/len(ref):.2f} %"
     )
     return prob, ans
 
@@ -466,11 +507,13 @@ def main() -> None:
     # Always pin a seed, even when the user didn't give one, and report it. Otherwise re-running
     # with --answers would silently produce a different problem set than the one just worked on.
     seed = args.seed if args.seed is not None else random.randrange(10000)
-    rng = random.Random(seed)
 
     print(f"\nseed {seed}")
     for i, name in enumerate(names, 1):
-        prob, ans = RECIPES[name](rng)
+        # Each recipe gets its own RNG derived from (seed, name). With one shared RNG a recipe's
+        # numbers depended on which recipes ran before it, so `drill.py wer --seed 7` and
+        # `drill.py attention wer --seed 7` produced different WER problems.
+        prob, ans = RECIPES[name](random.Random(f"{seed}:{name}"))
         print(f"\n{'='*66}\n[{i}] {name.upper()}   (seed {seed})\n{'='*66}\n{prob}")
         if args.answers:
             print(f"\n  --- solution ---\n{ans}")
