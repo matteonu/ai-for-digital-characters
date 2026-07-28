@@ -308,19 +308,30 @@ def ik(rng):
     alpha = rng.choice([0.1, 0.2, 0.5])
     star = np.array([float(rng.randint(3, 6)), float(rng.randint(1, 4))])
 
-    cum = np.cumsum(th)
+    cum = np.cumsum(th)                       # cumulative angle at each joint
+    deg = [math.degrees(c) for c in cum]
+
     e0 = np.array([sum(L[i] * math.cos(cum[i]) for i in range(n)),
                    sum(L[i] * math.sin(cum[i]) for i in range(n))])
-    de = star - e0
     J = np.array([
         [-sum(L[i] * math.sin(cum[i]) for i in range(j, n)) for j in range(n)],
         [ sum(L[i] * math.cos(cum[i]) for i in range(j, n)) for j in range(n)],
     ])
-    Jp = np.linalg.pinv(J)
-    dth = alpha * (Jp @ de)
+
+    # Everything downstream is computed from the ROUNDED values the student actually sees --
+    # notably the rounded J+ printed in the problem. Using the exact pseudoinverse here would
+    # produce a key that cannot be reproduced from the given numbers.
+    e0_r, J_r = np.round(e0, 2), np.round(J, 2)
+    Jp_r = np.round(np.linalg.pinv(J), 2)
+    de_r = np.round(star - e0_r, 2)
+    Jpde = np.round(Jp_r @ de_r, 3)
+    dth = np.round(alpha * Jpde, 3)
+    th_new = np.round(th + dth, 3)
+
+    ang = lambda i: "+".join(f"th{k+1}" for k in range(i + 1))   # th1, th1+th2, ...
     lengths = ", ".join(f"L{i+1} = {L[i]:g}" for i in range(n))
     # The exam hands you J+ (you can't invert a matrix by hand under time pressure), so do the same.
-    jp_rows = "\n".join("        " + str(R(row, 2).tolist()) for row in Jp)
+    jp_rows = "\n".join("        " + str(row.tolist()) for row in Jp_r)
     prob = (
         f"Inverse kinematics, one Jacobian step.  {n}-link planar arm, root at [0,0].\n"
         f"  {lengths};  all theta = pi/{frac};  target e* = {star.tolist()};  alpha = {alpha}\n"
@@ -328,14 +339,62 @@ def ik(rng):
         f"    J+ =\n{jp_rows}\n"
         f"  Compute (i) e0, (ii) delta-e, (iii) J, (iv) delta-theta, (v) updated angles."
     )
-    ans = (
-        f"  (i)   e0 = {R(e0).tolist()}\n"
-        f"  (ii)  de = e* - e0 = {R(de).tolist()}\n"
-        f"  (iii) J =\n        {str(R(J)).replace(chr(10), chr(10) + '        ')}\n"
-        f"  (iv)  dtheta = alpha J+ de = {R(dth, 3).tolist()}\n"
-        f"  (v)   theta_new = {R(th + dth, 3).tolist()} rad"
-    )
-    return prob, ans
+
+    out = ["  Cumulative angles (add up every angle out to that joint):"]
+    for i in range(n):
+        out.append(f"    {ang(i):<12} = {i+1}*pi/{frac} = {cum[i]:.3f} rad = {deg[i]:.1f} deg")
+
+    out.append("")
+    out.append("  (i) Forward kinematics   e0 = F(theta)")
+    for axis, fn in (("x", math.cos), ("y", math.sin)):
+        f_ = "cos" if axis == "x" else "sin"
+        terms = [L[i] * fn(cum[i]) for i in range(n)]
+        out.append(f"      e_{axis} = " + " + ".join(f"L{i+1}*{f_}({ang(i)})" for i in range(n)))
+        out.append("          = " + " + ".join(f"{L[i]:g}*{f_}({deg[i]:.1f}deg)" for i in range(n)))
+        out.append("          = " + " + ".join(f"{L[i]:g}*({fn(cum[i]):.4f})" for i in range(n)))
+        out.append("          = " + " + ".join(f"{t:.3f}" for t in terms)
+                   + f" = {sum(terms):.2f}")
+    out.append(f"      e0 = {e0_r.tolist()}")
+
+    out.append("")
+    out.append("  (ii) Error   de = e* - e0      (target minus current, not the reverse)")
+    out.append(f"      de = [{star[0]:g} - ({e0_r[0]:.2f}), {star[1]:g} - ({e0_r[1]:.2f})]"
+               f" = {de_r.tolist()}")
+
+    out.append("")
+    out.append("  (iii) Jacobian   J = de/dtheta     (column j keeps only joints j..n)")
+    out.append("      Row 1 = d(e_x)/d(theta) -- sines, negative:")
+    for j in range(n):
+        sym = " - ".join(f"L{i+1}*sin({ang(i)})" for i in range(j, n))
+        num = " - ".join(f"{L[i]:g}({math.sin(cum[i]):.4f})" for i in range(j, n))
+        out.append(f"        J[1,{j+1}] = -{sym} = -{num} = {J_r[0][j]:.2f}")
+    out.append("      Row 2 = d(e_y)/d(theta) -- cosines, positive:")
+    for j in range(n):
+        sym = " + ".join(f"L{i+1}*cos({ang(i)})" for i in range(j, n))
+        num = " + ".join(f"{L[i]:g}({math.cos(cum[i]):.4f})" for i in range(j, n))
+        out.append(f"        J[2,{j+1}] =  {sym} =  {num} = {J_r[1][j]:.2f}")
+    out.append(f"      J = {J_r.tolist()}")
+
+    out.append("")
+    out.append("  (iv) dtheta = alpha * J+ * de")
+    out.append("      First J+ * de -- each row of J+ dotted with de:")
+    for i in range(n):
+        prod = " + ".join(f"({Jp_r[i][k]:g})({de_r[k]:g})" for k in range(2))
+        parts = " + ".join(f"{Jp_r[i][k]*de_r[k]:.3f}" for k in range(2))
+        out.append(f"        (J+de)_{i+1} = {prod} = {parts} = {Jpde[i]:.3f}")
+    out.append(f"      Then scale by alpha = {alpha}:")
+    out.append(f"        dtheta = {alpha} * {Jpde.tolist()} = {dth.tolist()}")
+
+    out.append("")
+    out.append("  (v) Update   theta_new = theta + dtheta")
+    for i in range(n):
+        out.append(f"      th{i+1}_new = {th[i]:.3f} + ({dth[i]:.3f}) = {th_new[i]:.3f}")
+    out.append(f"      theta_new = {th_new.tolist()} rad   (stays in radians)")
+    out.append("")
+    out.append("  Rounding to 2 dp along the way can shift the last digit -- the exam marks the")
+    out.append("  method. One step does not reach the target; a real solver iterates.")
+
+    return prob, "\n".join(out)
 
 
 def relu_unit(rng):
