@@ -260,7 +260,8 @@ $$\sum_{t \in V^{(p)}} P(t) \;\ge\; p$$
 - $P(t)$ — the probability the model assigned to token $t$
 - $k$ — how many tokens to keep, **fixed in advance** (top-k)
 - $p$ — the **cumulative probability mass** to reach, e.g. $0.85$ (top-p)
-- $V^{(p)}$ — the resulting **candidate set** you sample from
+- $V^{(p)}$ — the resulting **candidate set** (the "nucleus") you sample from
+- $P'(t)$ — the **renormalized** probability of token $t$ within that set, so the survivors sum to $1$ again
 
 so its size adapts to the shape of the distribution.
 
@@ -273,7 +274,27 @@ so its size adapts to the shape of the distribution.
 | runs | 0.15 | 0.80 |
 | fast | 0.10 | $\mathbf{0.90 \ge 0.85}$ → stop |
 
-Candidates $= \{\text{cat},\,\text{dog},\,\text{runs},\,\text{fast}\}$, then renormalize over those four and sample.
+Candidates $= \{\text{cat},\,\text{dog},\,\text{runs},\,\text{fast}\}$.
+
+**Then renormalize.** Discarding `tree` and `blue` threw away $0.10$ of probability, so the survivors
+only sum to $0.90$ — that isn't a probability distribution any more and you can't sample from it.
+Divide each kept probability by the mass that survived:
+
+$$P'(t) = \frac{P(t)}{\sum_{t' \in V^{(p)}} P(t')} = \frac{P(t)}{0.90}$$
+
+| token | $P(t)$ | $P'(t)$ after renormalizing |
+|---|---|---|
+| cat | 0.35 | $0.35/0.90 = 0.3889$ |
+| dog | 0.30 | $0.30/0.90 = 0.3333$ |
+| runs | 0.15 | $0.15/0.90 = 0.1667$ |
+| fast | 0.10 | $0.10/0.90 = 0.1111$ |
+| | $0.90$ | $\mathbf{1.0000}$ ✓ |
+
+The discarded $0.10$ is shared out among the survivors in proportion to what they already had, so their
+*relative* odds are untouched — `cat` stays 3.5× more likely than `fast`. Only then do you sample.
+
+The exam question asks for the candidate set and the computation steps, so the renormalization isn't
+strictly required for the 2 points — but it's one line and it shows you know why the set is built at all.
 
 **Trap:** you include the token that *crosses* the threshold. Stopping at $0.80$ because $0.90$ overshoots
 is the classic wrong answer.
