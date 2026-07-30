@@ -393,6 +393,13 @@ a perfectly modelled triple.
 
 $$\text{score} = \sqrt{0.04 + 0.49 + 0.09} = 0.79 < 2.0 \;\Longrightarrow\; \textbf{likely true.}$$
 
+**Trap — don't forget the square root.** $\|\mathbf{v}\|$ means $\sqrt{v_1^2 + v_2^2 + v_3^2}$. Stopping at
+the sum of squares gives the *squared* norm: for $\mathbf{v} = [-1.2,\, 1.2,\, -1.7]$ that's
+$1.44 + 1.44 + 2.89 = 5.77$, whereas the score is $\sqrt{5.77} = 2.40$. Near a threshold this changes your
+answer. Note the L12 slides never state the norm — they only ask how to define $f_r(h,t)$ — which is why
+the exam says *"specify the scoring function"*: **write down which norm you are using**, then be
+consistent. (Squared $L_2$ is a legitimate variant; silently mixing the two is not.)
+
 **Part iii — the symmetry argument (write exactly this):** if $(h,r,t)$ and $(t,r,h)$ are both true, TransE requires
 
 $$\mathbf{h} + \mathbf{r} \approx \mathbf{t} \qquad\text{and}\qquad \mathbf{t} + \mathbf{r} \approx \mathbf{h}$$

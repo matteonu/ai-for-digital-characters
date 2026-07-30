@@ -250,10 +250,14 @@ def transe(rng):
         f"  h = {h.tolist()}, r = {r.tolist()}, t = {t.tolist()}\n"
         f"  Give the scoring function and the score; is it plausible against a threshold of 2.0?"
     )
+    sq = " + ".join(f"{x**2:.2f}" for x in v)
     ans = (
-        f"  score = ||h + r - t||\n"
+        f"  score = ||h + r - t||   (L2 norm -- the square root is part of it)\n"
+        f"  h + r     = {R(h + r, 2).tolist()}\n"
         f"  h + r - t = {R(v, 2).tolist()}\n"
-        f"  score = {score:.3f} -> {'plausible (< 2.0)' if score < 2 else 'not plausible (>= 2.0)'}"
+        f"  sum of squares = {sq} = {sum(x**2 for x in v):.2f}\n"
+        f"  score = sqrt({sum(x**2 for x in v):.2f}) = {score:.3f}"
+        f" -> {'plausible (< 2.0)' if score < 2 else 'not plausible (>= 2.0)'}"
     )
     return prob, ans
 
