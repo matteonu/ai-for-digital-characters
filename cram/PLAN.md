@@ -29,7 +29,7 @@ The highest-value week. Everything here is worth points on both past papers.
 | 1 | Mon Jul 27 | Read `CALC_RECIPES.md` start to finish (30 min). Then recipes **1 & 2** (attention, positional encoding) by hand: `python3 drill.py attention pe` ×3 rounds. |
 | 2 | Tue Jul 28 | Recipes **3, 4, 5** (Mel, WER, power spectrum). Mel is 12 pts on the 2024 paper — do it until the Hz endpoints come back out correctly every time. |
 | 3 | Wed Jul 29 | Recipe **13 (IK Jacobian)** — 10 pts on *both* papers, the single biggest item. `python3 drill.py ik` ×4. Learn the "column j drops every term before joint j" rule. |
-| 4 | Thu Jul 30 | Recipes **6, 7, 8** (top-p, cosine, perplexity) + **9, 10** (TransE, SPARQL). All short, all cheap points. |
+| 4 | Thu Jul 30 | Recipes **6, 7, 8** (top-p, cosine, perplexity) + **9, 10** (TransE, SPARQL): `python3 drill.py topp cosine perplexity transe sparql`. All short, all cheap points. |
 | 5 | Fri Jul 31 | Recipes **11, 12** (heart rate, artifact CBD). Then a full mixed set: `python3 drill.py`. |
 | 6 | Sat Aug 1 | Full mixed drill, **timed at 1 min/point**. Redo every one you got wrong. |
 | 7 | Sun Aug 2 | Light. First pass through Anki deck `00_Exam_MC_Traps` only. Stop after 30 min. |
@@ -47,7 +47,7 @@ Each definition day pairs with a short calc drill so Week 1's recipes don't deca
 | 8 | Mon Aug 3 | Anki deck `00_Exam_MC_Traps` (79 cards). 16–19 exam points, pure memorization. **The only deck you need to import.** |
 | 9 | Tue Aug 4 | `DEFINITIONS.md` Q2–Q4 (affective, deep learning, speech recognition) + `drill.py attention mel wer`. |
 | 10 | Wed Aug 5 | `DEFINITIONS.md` Q5–Q6 (LLMs, speech synthesis) + `drill.py topp cosine perplexity`. |
-| 11 | Thu Aug 6 | `DEFINITIONS.md` Q7–Q9 (knowledge graphs, RL, animation) + `drill.py transe ik`. |
+| 11 | Thu Aug 6 | `DEFINITIONS.md` Q7–Q9 (knowledge graphs, RL, animation) + `drill.py transe sparql ik`. |
 | 12 | Fri Aug 7 | Full mixed calc drill + full MC deck pass. |
 | 13 | **Sat Aug 8** | **MOCK 1: Exam 2024. 2 hours, closed book, calculator in RAD.** |
 | 14 | Sun Aug 9 | Grade mock 1 against the point table. Write down every lost point. Nothing else. |

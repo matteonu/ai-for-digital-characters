@@ -434,6 +434,9 @@ One relation hop is a one-hop query; chained relations form a path query.
 
 **Traps:** every line ends with ` .`; the final one may too. Reuse the *same* variable name to express the AND.
 
+**Drill it:** `python3 drill.py sparql` builds a small knowledge graph and asks for a one-hop, path or
+conjunctive query. The solution is *executed* against the graph, so it also shows what the query returns.
+
 ---
 
 ## 11. Heart rate from R-R interval

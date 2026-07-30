@@ -55,7 +55,7 @@ Mark ✓ only when you can do it from a blank sheet with no reference.
 | Cosine similarity | 4 | ☐ |
 | Perplexity | 2 | ☐ |
 | TransE score | 3 | ☐ |
-| SPARQL query | 3–5 | ☐ |
+| SPARQL query (one-hop / path / conjunctive) | 3–5 | ☐ |
 | Heart rate from R-R | 1 | ☐ |
 | Artifact detection (CBD) | 5 | ☐ |
 | IK Jacobian step | 10 | ☐ |

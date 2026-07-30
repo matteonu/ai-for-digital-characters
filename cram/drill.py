@@ -477,6 +477,113 @@ def fidget(rng):
     return prob, ans
 
 
+def _match(triples, patterns):
+    """Evaluate a list of triple patterns against a triple store. Returns list of bindings.
+
+    Lets the drill *execute* the SPARQL it generates, so the stated answer is verified against
+    the graph rather than assumed.  Anything starting with '?' is a variable.
+    """
+    results = [{}]
+    for ps, pp, po in patterns:
+        nxt = []
+        for binding in results:
+            for s, p, o in triples:
+                b = dict(binding)
+                ok = True
+                for pat, val in ((ps, s), (pp, p), (po, o)):
+                    if pat.startswith("?"):
+                        if b.setdefault(pat, val) != val:
+                            ok = False
+                            break
+                    elif pat != val:
+                        ok = False
+                        break
+                if ok:
+                    nxt.append(b)
+        results = nxt
+    return results
+
+
+_PEOPLE = ["Dr. Sarah Clark", "Dr. Liu Wei", "Dr. Ana Rossi", "Dr. Elena Fischer"]
+_STUDENTS = ["Mark Thompson", "Jonas Weber", "Priya Nair"]
+_DEPTS = ["Computer Science Department", "Physics Department", "Biology Department"]
+_UNIS = ["ETH Zurich", "EPFL"]
+_CONFS = ["ICML", "NeurIPS", "CVPR"]
+_PROJECTS = ["AI for Healthcare", "Quantum Sensing", "Protein Folding"]
+
+
+def sparql(rng):
+    """Exam 2025 Q7b / 2024 Q7c -- classify the query type and write the SPARQL."""
+    people = rng.sample(_PEOPLE, 3)
+    student = rng.choice(_STUDENTS)
+    depts = rng.sample(_DEPTS, 2)
+    uni = rng.choice(_UNIS)
+    confs = rng.sample(_CONFS, 2)
+    projects = rng.sample(_PROJECTS, 2)
+
+    triples = []
+    for i, person in enumerate(people):
+        triples.append((person, "affiliatedWith", depts[i % 2]))
+    for d in depts:
+        triples.append((d, "partOf", uni))
+    # person 0 and person 2 publish; only person 0 also leads a project
+    papers = {people[0]: "Advanced ML Algorithms", people[2]: "Sensor Fusion Methods"}
+    for person, paper in papers.items():
+        triples.append((person, "published", paper))
+    triples.append((papers[people[0]], "presentedAt", confs[0]))
+    triples.append((papers[people[2]], "presentedAt", confs[1]))
+    triples.append((people[0], "lead", projects[0]))
+    triples.append((people[1], "lead", projects[1]))
+    triples.append((people[0], "supervise", student))
+    triples.append((student, "affiliatedWith", depts[0]))
+    rng.shuffle(triples)
+
+    kind = rng.choice(["one-hop", "path", "conjunctive"])
+    if kind == "one-hop":
+        question = f'"Which department is {people[0]} affiliated with?"'
+        patterns = [(people[0], "affiliatedWith", "?dept")]
+        select = "?dept"
+        why = "a single relation from a known entity -> one hop"
+    elif kind == "path":
+        question = f'"Which university is the department of {people[0]} part of?"'
+        patterns = [(people[0], "affiliatedWith", "?dept"), ("?dept", "partOf", "?uni")]
+        select = "?uni"
+        why = "two relations chained through an intermediate variable -> path query"
+    else:
+        question = (f'"Find all researchers affiliated with the {depts[0]} AND who published a paper '
+                    f'presented at {confs[0]} AND who lead a research project."')
+        patterns = [
+            ("?researcher", "affiliatedWith", depts[0]),
+            ("?researcher", "published", "?paper"),
+            ("?paper", "presentedAt", confs[0]),
+            ("?researcher", "lead", "?project"),
+        ]
+        select = "?researcher"
+        why = "several conditions AND-ed on the same variable -> conjunctive query"
+
+    answers = sorted({b[select] for b in _match(triples, patterns)})
+
+    kg = "\n".join(f"    ({s}, {p}, {o})" for s, p, o in triples)
+    prob = (
+        f"SPARQL.  Knowledge graph:\n{kg}\n\n"
+        f"  Query: {question}\n"
+        f"  (a) Classify the query type as discussed in the lecture.\n"
+        f"  (b) Write a SPARQL query that retrieves it. Use the uni: prefix for relations."
+    )
+
+    body = "\n".join(f"      {s if s.startswith('?') else repr(s)} uni:{p} "
+                     f"{o if o.startswith('?') else repr(o)} ." for s, p, o in patterns)
+    body = body.replace("'", '"')
+    ans = (
+        f"  (a) {kind.upper()} query -- {why}\n\n"
+        f"  (b) SELECT {select} WHERE {{\n{body}\n      }}\n\n"
+        f"  Returns: {', '.join(answers) if answers else '(no match)'}\n"
+        f"  Note: entity names may be written unquoted; the marks are for the triple patterns.\n"
+        f"  Every pattern line ends with a period, and the shared variable is what expresses the AND."
+    )
+    return prob, ans
+
+
 _VOCAB = ["deep", "learning", "transformers", "neural", "networks", "models", "speech", "chatbots"]
 
 
@@ -539,6 +646,7 @@ RECIPES = {
     "cosine": cosine,
     "perplexity": perplexity,
     "transe": transe,
+    "sparql": sparql,
     "hr": heart_rate,
     "artifact": artifact,
     "ik": ik,
