@@ -9,8 +9,8 @@ to reflex, memorize a short list of one-line definitions, and ignore everything 
 lecture slides cover to cover; you do not have time and it is not how the points are earned.
 
 **Explicitly dropped:** the LaTeX prose summary (chapters 5–14), the bullet review PDFs, figure
-extraction, expanding Anki decks `01`–`08`, and deep understanding of any topic. All moved to
-[`archive/`](../archive/README.md) — shelved, not deleted.
+extraction, expanding Anki decks `01`–`08`, and deep understanding of any topic. Removed from the
+working tree on 2026-08-06 but still in git history — see "Removed material" in the [README](../README.md).
 
 **On Anki:** only deck `00_Exam_MC_Traps` survives. Its 79 true/false statements map directly onto the
 16–19 point MC block, which is pure recall and the format's natural fit. The topic decks `01`–`08` are
