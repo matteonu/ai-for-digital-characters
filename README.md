@@ -15,6 +15,7 @@ it was built from.
 | [`cram/PLAN.md`](cram/PLAN.md) | The 21-day schedule, 2 h/day |
 | [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types, every number verified |
 | [`cram/DEFINITIONS.md`](cram/DEFINITIONS.md) | One-line answers to the recurring prose questions |
+| `cram/DEFINITIONS_printable.pdf` | Print version — one question per page, ruled note space at the foot |
 | [`cram/drill.py`](cram/drill.py) | Practice problems with fresh numbers and worked solutions |
 | [`progress.md`](progress.md) | Daily checklist and recipe confidence tracker |
 | `anki/decks/00_Exam_MC_Traps.csv` | 79 true/false cards for the MC block |
@@ -41,6 +42,19 @@ papers stay sealed for the mocks, so practice always uses generated numbers.
 
 Recipes: `attention pe mel wer power topp cosine perplexity transe sparql hr artifact ik`
 plus the exercise-only `relu hrv fidget tfidf`.
+
+## Printable handout
+
+`cram/DEFINITIONS_printable.pdf` is the definitions laid out for paper: each exam question on its own
+page, with ruled lines at the foot for notes you add while drilling.
+
+```bash
+cd cram
+python3 make_printable.py               # rebuild after editing DEFINITIONS.md
+python3 make_printable.py --lines 10    # more note lines (spills onto a second page)
+```
+
+Needs `pandoc` and `xelatex`.
 
 ## Anki
 
