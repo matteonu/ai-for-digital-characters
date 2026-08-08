@@ -49,14 +49,14 @@ one half or the other.
 
 ### What a spectrogram is
 
-Chop the audio into short frames (~20 ms). For each frame, record **how much energy sits at each
+Chop the audio into short frames (about 20 ms). For each frame, record **how much energy sits at each
 frequency**. Stack the frames side by side and you get a picture: time across, frequency up,
 brightness = energy. That's a **spectrogram**.
 
 A **mel-spectrogram** is the same picture with the frequency axis spaced the way humans hear —
 fine detail low down, coarse up high (this is recipe 3 in `CALC_RECIPES.md`).
 
-Why bother: a mel-spectrogram is ~80 numbers per frame at ~100 frames/second, versus 22,050 raw
+Why bother: a mel-spectrogram is about 80 numbers per frame at about 100 frames/second, versus 22,050 raw
 samples. Far easier to predict, and it throws away detail the ear doesn't use.
 
 **Phase.** A spectrogram says how *much* of each frequency is present but not *where the wave peaks* —
@@ -259,7 +259,7 @@ making motion read as alive.
 
 Modern work learns from **motion capture** — recordings of real people moving.
 
-The difficulty is dimensionality. A single pose is ~60 numbers (a joint angle per degree of freedom),
+The difficulty is dimensionality. A single pose is about 60 numbers (a joint angle per degree of freedom),
 so a motion is a path through 60-dimensional space. But almost every point in that space is a
 grotesque, impossible body. **Real human motion occupies a tiny, curved sliver of it** — and that
 sliver is called a **manifold**.

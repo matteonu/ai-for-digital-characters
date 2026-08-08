@@ -16,7 +16,8 @@ it was built from.
 | [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types, every number verified |
 | [`cram/DEFINITIONS.md`](cram/DEFINITIONS.md) | One-line answers to the recurring prose questions |
 | [`cram/BASICS.md`](cram/BASICS.md) | Plain-language primer for Q6, Q8, Q9 — read before those definitions |
-| `cram/DEFINITIONS_printable.pdf` | Print version — one question per page, ruled note space at the foot |
+| `cram/DEFINITIONS_printable.pdf` | Print version of the definitions — ruled note space at the foot of each page |
+| `cram/BASICS_printable.pdf` | Print version of the primer |
 | [`cram/drill.py`](cram/drill.py) | Practice problems with fresh numbers and worked solutions |
 | [`progress.md`](progress.md) | Daily checklist and recipe confidence tracker |
 | `anki/decks/00_Exam_MC_Traps.csv` | 79 true/false cards for the MC block |
@@ -51,8 +52,9 @@ page, with ruled lines at the foot for notes you add while drilling.
 
 ```bash
 cd cram
-python3 make_printable.py               # rebuild after editing DEFINITIONS.md
-python3 make_printable.py --lines 10    # more note lines (spills onto a second page)
+python3 make_printable.py                                        # definitions
+python3 make_printable.py --source BASICS.md --out BASICS_printable.pdf
+python3 make_printable.py --lines 10                             # more note lines
 ```
 
 Needs `pandoc` and `xelatex`.
