@@ -127,7 +127,10 @@ The **target cost** $T$ measures how closely the unit matches the desired descri
 - **FastSpeech:** **non-autoregressive** with an explicit **duration predictor** — generates all frames in **parallel**, so far faster and more robust; needs duration supervision.
 - 2024 MC trap: repeating encoder states (longer durations) makes speech **slower**, not faster.
 
-**Vocoders:** **Griffin-Lim** iteratively reconstructs **phase** from the magnitude spectrogram — fast, lowest quality. **WaveNet** uses **causal dilated convolutions**, autoregressive — excellent quality but slow sample-by-sample inference. **HiFi-GAN** is GAN-based and parallel — **best choice for real-time**, high quality and fast.
+**Vocoders:**
+- **Griffin-Lim** — iteratively reconstructs **phase** from the magnitude spectrogram; fast, lowest quality.
+- **WaveNet** — **causal dilated convolutions**, autoregressive; excellent quality but slow sample-by-sample inference.
+- **HiFi-GAN** — GAN-based and parallel; **best choice for real-time**, high quality and fast.
 
 **Style transfer, integrated into the acoustic model (3 ways):**
 1. **One-hot speaker/style labels** fed to the encoder — simple, limited to labelled styles.
