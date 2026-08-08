@@ -22,10 +22,13 @@ Do not write essays. The graders want the keyword.
 - *"Anxious, tense, helpless"* = negative valence, high arousal, **low dominance** (2025 answer).
 
 **Action Units (FACS):** the smallest visually distinguishable facial muscle movements; combinations of AUs encode expressions (e.g. AU45 = blink).
+
 **Fidgeting:** amount of body movement per unit time, computed from frame-to-frame pixel/landmark differences (motion energy as a % of the frame).
+
 **Mouth Aspect Ratio:** ratio of vertical mouth opening to horizontal mouth width, from facial landmarks.
 
 **HRV:** variability of the time between consecutive heartbeats (R-R intervals) — reflects autonomic nervous system activity. Quantified as the standard deviation $\sigma = \sqrt{\tfrac{1}{N}\sum_i (x_i - \bar{x})^2}$; **higher** $\sigma$ = relaxed, **lower** = stress.
+
 **Skin conductance:** sweat-gland activity changing skin conductivity — a direct index of **arousal** (not valence).
 - **Phasic** = fast, event-related peaks. **Tonic** = slow baseline drift. Separated by **convex optimization** (cvxEDA).
 - SC response features: amplitude, latency, rise time, half-recovery time.
@@ -41,7 +44,11 @@ Do not write essays. The graders want the keyword.
 **Vanishing gradients + LSTM (2 pts):** gradients shrink multiplicatively when backpropagated through many time steps, so long-range dependencies are not learned. **LSTM** adds a **cell state** plus **forget / input / output gates**; the cell state carries information across time with little attenuation, and the gates control what is erased, written, and exposed.
 
 **Positional encoding, why:** self-attention is permutation-invariant — without it the model cannot tell token order.
-**Skip connections:** let gradients bypass layers, enabling deep stacks. **Layer norm:** stabilizes training.
+
+**Skip connections:** let gradients bypass layers, enabling deep stacks.
+
+**Layer norm:** stabilizes training.
+
 **Masked attention (decoder):** prevents attending to future tokens, preserving autoregressive generation.
 
 **Backprop trap (2025 MC):** gradients **do** depend on the activation functions — the chain rule multiplies their derivatives $\sigma'(z)$ at every layer.
@@ -62,7 +69,11 @@ $$m = 1127 \ln\!\left(1 + \frac{f}{700}\right)$$
 
 **Phone vs diphone:** a **phone** is a single speech sound; a **diphone** runs from the middle of one phone to the middle of the next, so it **captures the co-articulation transition** between sounds — the transitions are the hard part, and cutting mid-phone puts the join in a stable region.
 
-**Architectures:** **CTC** aligns without frame labels using a **blank** token. **RNN-T** = encoder + prediction network + joint network, and **supports streaming**. **Whisper** = large encoder-decoder trained on weakly-supervised multilingual data.
+**Architectures:**
+- **CTC** — aligns without frame-level labels using a **blank** token.
+- **RNN-T** — encoder + prediction network + joint network; **supports streaming**.
+- **Whisper** — large encoder-decoder trained on weakly-supervised multilingual data.
+
 **SpecAugment:** time warping, frequency masking, time masking.
 
 ---
@@ -79,9 +90,13 @@ $$m = 1127 \ln\!\left(1 + \frac{f}{700}\right)$$
 **top-k vs top-p (2 pts):** top-k always keeps a **fixed number** $k$ of the highest-probability tokens; top-p keeps the smallest set $V^{(p)}$ with $\sum_{t \in V^{(p)}} P(t) \ge p$, so the candidate set **adapts** to how peaked or flat the distribution is.
 
 **PEFT (LoRA, adapters):** freeze the bulk of the pretrained weights, train only a small number of added parameters — cheaper and storable per task.
+
 **Quantization:** lower-precision weights → smaller and faster, usually at some accuracy cost.
+
 **Pruning:** remove the **least** important weights.
+
 **RAG:** retrieve relevant documents at inference and condition generation on them — adds fresh/private knowledge without retraining.
+
 **Prompt strategies:** zero-shot chain-of-thought ("think step by step"), few-shot examples, self-ask.
 
 **Perplexity:** $\text{PPL} = \left(\prod_i p_i\right)^{-1/N}$ — how surprised the model is by the text; **lower is better**.
@@ -160,7 +175,9 @@ $\mathbf{h} \approx \mathbf{t}$ — the entities collapse to the same embedding 
 **On-policy vs off-policy:** on-policy methods (policy gradient, A2C, PPO) must use data from the **current** policy, so old trajectories cannot be reused; off-policy methods (Q-learning, DDPG, SAC) can reuse a replay buffer — more sample-efficient.
 
 **Actor-critic (A2C):** the **critic** learns a value function used as a **baseline**, reducing the variance of the policy-gradient estimate; the **actor** is the policy.
+
 **PPO:** a policy-optimization method that limits how far the policy changes per update, giving more stable training.
+
 **Q-learning:** the policy is **implicit** — take $a^* = \arg\max_a Q(s,a)$. *(Slides mark this "for self-study" — low priority.)*
 
 ---
@@ -190,4 +207,5 @@ $$x = f(z) = f_1\big(f_2(\ldots f_N(z))\big), \qquad z = f_N^{-1}\big(\ldots f_1
 Because each step is invertible you can both **sample** and **evaluate the exact density** $p(x)$ via the change-of-variables formula (using the Jacobian determinant) — combining the benefits of generative models and explicit PDF modelling. *Application: generating diverse character motion.*
 
 **Autonomous agents:** operate independently, perceive and react to their environment, and act **goal-directedly over time** — not solely from immediate perception (2025 MC).
+
 **Dialogue trees:** predictable and controllable, but **low flexibility** — they cannot handle unexpected queries and grow unmanageable as branches multiply.
