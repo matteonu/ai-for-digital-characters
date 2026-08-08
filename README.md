@@ -15,6 +15,7 @@ it was built from.
 | [`cram/PLAN.md`](cram/PLAN.md) | The 21-day schedule, 2 h/day |
 | [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types, every number verified |
 | [`cram/DEFINITIONS.md`](cram/DEFINITIONS.md) | One-line answers to the recurring prose questions |
+| [`cram/BASICS.md`](cram/BASICS.md) | Plain-language primer for Q6, Q8, Q9 — read before those definitions |
 | `cram/DEFINITIONS_printable.pdf` | Print version — one question per page, ruled note space at the foot |
 | [`cram/drill.py`](cram/drill.py) | Practice problems with fresh numbers and worked solutions |
 | [`progress.md`](progress.md) | Daily checklist and recipe confidence tracker |

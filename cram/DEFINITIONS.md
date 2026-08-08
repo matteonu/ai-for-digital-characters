@@ -189,7 +189,7 @@ $\mathbf{h} \approx \mathbf{t}$ — the entities collapse to the same embedding 
 
 **FK vs IK:** forward kinematics maps **joint angles → end-effector position**, $\mathbf{e} = F(\boldsymbol\theta)$; inverse kinematics finds the **joint angles that reach a target** position, $\boldsymbol\theta = F^{-1}(\mathbf{e}^*)$.
 
-**Linear Blend Skinning:** each vertex is influenced by **several** bones with weights summing to $1$. Fails at **large joint rotations**, producing the **candy-wrapper** collapse artifact.
+**Linear Blend Skinning:** each vertex $v_i$ is influenced by **several** bones — its new position is the weighted average of what each bone would do on its own, $v_i' = \sum_{j=1}^{B} w_{ij}\,(R_j v_i + T_j)$, with weights summing to $1$. Fails at **large joint angles or twisting bone motion**, where the slides call the artifact the **"bow tie" effect** (volume reduction) — the same thing that is elsewhere called the candy-wrapper artifact. **Use the lecture's term.**
 
 **Disney "Slow In and Slow Out":** motion **accelerates and decelerates** at the extremes rather than moving linearly — linear interpolation between keyframes looks robotic and abrupt.
 

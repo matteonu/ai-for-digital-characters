@@ -46,8 +46,8 @@ Each definition day pairs with a short calc drill so Week 1's recipes don't deca
 |-----|------|---------|
 | 8 | Mon Aug 3 | Anki deck `00_Exam_MC_Traps` (79 cards). 16–19 exam points, pure memorization. **The only deck you need to import.** |
 | 9 | Tue Aug 4 | `DEFINITIONS.md` Q2–Q4 (affective, deep learning, speech recognition) + `drill.py attention mel wer`. |
-| 10 | Wed Aug 5 | `DEFINITIONS.md` Q5–Q6 (LLMs, speech synthesis) + `drill.py topp cosine perplexity`. |
-| 11 | Thu Aug 6 | `DEFINITIONS.md` Q7–Q9 (knowledge graphs, RL, animation) + `drill.py transe sparql ik`. |
+| 10 | Wed Aug 5 | `DEFINITIONS.md` Q5–Q6 (LLMs, speech synthesis) + `drill.py topp cosine perplexity`. Read [`BASICS.md`](BASICS.md) first for Q6. |
+| 11 | Thu Aug 6 | `DEFINITIONS.md` Q7–Q9 (knowledge graphs, RL, animation) + `drill.py transe sparql ik`. Read [`BASICS.md`](BASICS.md) first for Q8 and Q9. |
 | 12 | Fri Aug 7 | Full mixed calc drill + full MC deck pass. |
 | 13 | **Sat Aug 8** | **MOCK 1: Exam 2024. 2 hours, closed book, calculator in RAD.** |
 | 14 | Sun Aug 9 | Grade mock 1 against the point table. Write down every lost point. Nothing else. |
