@@ -120,7 +120,25 @@ T(s_t, u_j) = \sum_{n=1}^{N} w_n\, T_n(s_t, u_j)
 J(u_j, u_{j+1}) = \sum_{p=1}^{P} w_p\, J_p(u_j, u_{j+1})
 $$
 
-The **target cost** $T$ measures how closely the unit matches the desired description ($F_0$, stress, duration, position); the **join cost** $J$ measures how smoothly it joins the next unit ($F_0$, energy, spectral features). Crucially $J(u_j, u_{j+1}) = 0$ when the two units were **consecutive in the original recording**. Limitation: quality depends on database coverage; modern neural TTS removes this.
+**where:** both sums run over **features**, not over units or time — each cost is a weighted checklist.
+
+- $s_t$ — the **target** diphone you want to say; $u_j$ — a **candidate** unit from the recorded database
+- $N$ — how many **target features** are compared; $n$ indexes them. The slides list $F_0$, stress, duration, position
+- $T_n(s_t, u_j)$ — mismatch on target feature $n$ alone (e.g. how far this unit's pitch is from the pitch you wanted)
+- $w_n$ — how much feature $n$ counts, so getting pitch wrong can be penalized more than position
+- $P$ — how many **join features** are compared; $p$ indexes them. The slides list $F_0$, energy, spectral features
+- $J_p(u_j, u_{j+1})$ — mismatch on join feature $p$ across the seam between two consecutive units
+- $w_p$ — the weight for join feature $p$
+
+So the **target cost** $T$ asks *"is this the right sound?"* and the **join cost** $J$ asks *"will it splice cleanly onto the next one?"* Crucially $J(u_j, u_{j+1}) = 0$ when the two units were **consecutive in the original recording** — no seam, nothing to smooth.
+
+The full sentence is then chosen by minimizing both together over the whole sequence of $J$ units:
+
+$$\hat{U} = \arg\min_{U} \sum_{j=1}^{J} T(s_j, u_j) + \sum_{j=1}^{J-1} J(u_j, u_{j+1})$$
+
+(watch the clash: $J$ is both the join-cost function and the number of units — that's the lecture's notation, not a typo.)
+
+Limitation: quality depends on database coverage; modern neural TTS removes this.
 
 **Tacotron 2 vs FastSpeech (key architectural difference + effect):**
 - **Tacotron 2:** **autoregressive** decoder with attention — generates mel frames one at a time; good quality but slow, and attention can fail (skipped/repeated words).
