@@ -197,7 +197,11 @@ $\mathbf{h} \approx \mathbf{t}$ — the entities collapse to the same embedding 
 
 **Actor-critic (A2C):** the **critic** learns a value function used as a **baseline**, reducing the variance of the policy-gradient estimate; the **actor** is the policy.
 
-**PPO:** a policy-optimization method that limits how far the policy changes per update, giving more stable training.
+**PPO:** limits how far the policy may change per update, giving stable training. L_14 s.45 shows the **clipped surrogate objective** on the probability ratio $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_k}(a_t|s_t)}$:
+
+$$L(\theta, \theta_k) = \mathbb{E}\left[\min\!\left(r_t(\theta)\,A_t,\ \text{clip}\big(r_t(\theta),\, 1-\epsilon,\, 1+\epsilon\big) A_t\right)\right]$$
+
+Clipping removes the incentive to push the policy outside a trust region, which also makes it safe to take **several gradient epochs on the same batch** — better sample efficiency than vanilla policy gradient, which must discard each batch after one step.
 
 **Q-learning:** the policy is **implicit** — take $a^* = \arg\max_a Q(s,a)$. *(Slides mark this "for self-study" — low priority.)*
 

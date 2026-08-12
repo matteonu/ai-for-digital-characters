@@ -16,8 +16,9 @@ it was built from.
 | [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types, every number verified |
 | [`cram/DEFINITIONS.md`](cram/DEFINITIONS.md) | One-line answers to the recurring prose questions |
 | [`cram/BASICS.md`](cram/BASICS.md) | Plain-language primer for Q6, Q8, Q9 — read before those definitions |
-| `cram/DEFINITIONS_printable.pdf` | Print version of the definitions — ruled note space at the foot of each page |
-| `cram/BASICS_printable.pdf` | Print version of the primer |
+| [`cram/EXAM_2024_KEY.md`](cram/EXAM_2024_KEY.md) | Reconstructed answer key for the 2024 paper — use to grade mock 1 |
+| [`cram/EXAM_2025_KEY.md`](cram/EXAM_2025_KEY.md) | Reconstructed answer key for the 2025 paper — use to grade mock 2 |
+| `cram/*_printable.pdf` | Print versions of the four documents above — ruled note space at the foot of each page |
 | [`cram/drill.py`](cram/drill.py) | Practice problems with fresh numbers and worked solutions |
 | [`progress.md`](progress.md) | Daily checklist and recipe confidence tracker |
 | `anki/decks/00_Exam_MC_Traps.csv` | 79 true/false cards for the MC block |
@@ -28,7 +29,11 @@ it was built from.
 |------|-------------|
 | `slides/` | Lecture slides (L01–L14) |
 | `exercises/` | Exercise sheets and solutions |
-| `AIChar_Exam_Spring_*.pdf` | Past exams — **keep sealed** until the mocks on Aug 8 and Aug 12 |
+| `AIChar_Exam_Spring_*.pdf` | Past exams — blank questionnaires, **keep sealed** until the mocks on Aug 8 and Aug 12 |
+
+**ETH published no solutions for either exam.** The `EXAM_*_KEY.md` files above are reconstructed:
+every number recomputed in Python, every prose answer checked against the slides and cited by lecture
+and slide number. The exercise solutions under `exercises/` *are* official.
 
 ## Drilling
 
@@ -54,6 +59,7 @@ page, with ruled lines at the foot for notes you add while drilling.
 cd cram
 python3 make_printable.py                                        # definitions
 python3 make_printable.py --source BASICS.md --out BASICS_printable.pdf
+python3 make_printable.py --source EXAM_2025_KEY.md --out EXAM_2025_KEY_printable.pdf
 python3 make_printable.py --lines 10                             # more note lines
 ```
 

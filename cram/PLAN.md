@@ -50,7 +50,7 @@ Each definition day pairs with a short calc drill so Week 1's recipes don't deca
 | 11 | Thu Aug 6 | `DEFINITIONS.md` Q7–Q9 (knowledge graphs, RL, animation) + `drill.py transe sparql ik`. Read [`BASICS.md`](BASICS.md) first for Q8 and Q9. |
 | 12 | Fri Aug 7 | Full mixed calc drill + full MC deck pass. |
 | 13 | **Sat Aug 8** | **MOCK 1: Exam 2024. 2 hours, closed book, calculator in RAD.** |
-| 14 | Sun Aug 9 | Grade mock 1 against the point table. Write down every lost point. Nothing else. |
+| 14 | Sun Aug 9 | Grade mock 1 against [`EXAM_2024_KEY.md`](EXAM_2024_KEY.md). Write down every lost point. Nothing else. |
 
 ---
 
@@ -61,7 +61,7 @@ Each definition day pairs with a short calc drill so Week 1's recipes don't deca
 | 15 | Mon Aug 10 | Fix the biggest gaps from mock 1, highest-point-value first. |
 | 16 | Tue Aug 11 | Definition drill — the recurring one-liners (see `DEFINITIONS.md`). |
 | 17 | **Wed Aug 12** | **MOCK 2: Exam 2025. 2 hours, closed book.** |
-| 18 | Thu Aug 13 | Grade mock 2. Fix gaps. |
+| 18 | Thu Aug 13 | Grade mock 2 against [`EXAM_2025_KEY.md`](EXAM_2025_KEY.md). Fix gaps. |
 | 19 | Fri Aug 14 | Every calc recipe once, timed — **including the four exercise-only ones**: `python3 drill.py relu hrv fidget tfidf`. |
 | 20 | Sat Aug 15 | Full MC deck + definitions. |
 | 21 | Sun Aug 16 | Light skim of `CALC_RECIPES.md` only. Pack calculator (**RAD mode**), ID. Sleep. |
@@ -77,6 +77,11 @@ readiness — dangerous when the target is a bare pass.
 
 So: **`drill.py` generates the same problems with new numbers**; the two real papers stay sealed until
 Aug 8 and Aug 12.
+
+**On grading the mocks:** ETH published no official solutions — the exam PDFs are blank questionnaires.
+[`EXAM_2024_KEY.md`](EXAM_2024_KEY.md) and [`EXAM_2025_KEY.md`](EXAM_2025_KEY.md) are reconstructed keys
+with every number recomputed and every prose answer cited to a lecture slide. Read a key **only after**
+sitting its paper — it contains the full answers.
 
 ```bash
 cd cram

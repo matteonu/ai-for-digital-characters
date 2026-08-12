@@ -25,7 +25,12 @@ HEADER = HERE / "printable-header.tex"
 OUTPUT = HERE / "DEFINITIONS_printable.pdf"
 
 # Running header, per source document.
-TITLES = {"DEFINITIONS": "exam answers", "BASICS": "basics primer"}
+TITLES = {
+    "DEFINITIONS": "exam answers",
+    "BASICS": "basics primer",
+    "EXAM_2024_KEY": "answer key — exam 2024",
+    "EXAM_2025_KEY": "answer key — exam 2025",
+}
 
 
 def preprocess(md: str, lines: int) -> str:
