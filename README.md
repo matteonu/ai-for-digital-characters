@@ -13,7 +13,7 @@ it was built from.
 | Path | Description |
 |------|-------------|
 | [`cram/PLAN.md`](cram/PLAN.md) | The 21-day schedule, 2 h/day |
-| [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types, every number verified |
+| [`cram/CALC_RECIPES.md`](cram/CALC_RECIPES.md) | 13 exam calculations (~55 points) + 4 exercise-only types + the RL formulation template, every number verified |
 | [`cram/DEFINITIONS.md`](cram/DEFINITIONS.md) | One-line answers to the recurring prose questions |
 | [`cram/BASICS.md`](cram/BASICS.md) | Plain-language primer for Q6, Q8, Q9 — read before those definitions |
 | [`cram/EXAM_2024_KEY.md`](cram/EXAM_2024_KEY.md) | Reconstructed answer key for the 2024 paper — use to grade mock 1 |

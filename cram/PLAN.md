@@ -63,7 +63,7 @@ Each definition day pairs with a short calc drill so Week 1's recipes don't deca
 | 17 | **Wed Aug 12** | **MOCK 2: Exam 2025. 2 hours, closed book.** |
 | 18 | Thu Aug 13 | Grade mock 2 against [`EXAM_2025_KEY.md`](EXAM_2025_KEY.md). Fix gaps. |
 | 19 | Fri Aug 14 | Every calc recipe once, timed — **including the four exercise-only ones**: `python3 drill.py relu hrv fidget tfidf`. |
-| 20 | Sat Aug 15 | Full MC deck + definitions. |
+| 20 | Sat Aug 15 | Full MC deck + definitions. Add **recipe 18** (RL formulation) from `CALC_RECIPES.md` — 10–13 prose points on both papers, and it drills like a calculation. |
 | 21 | Sun Aug 16 | Light skim of `CALC_RECIPES.md` only. Pack calculator (**RAD mode**), ID. Sleep. |
 | — | **Mon Aug 17** | **EXAM.** |
 

@@ -35,6 +35,13 @@ drill them once each in week 3, not before.
 | 16 | Fidgeting / motion energy | Ex 1, 2c |
 | 17 | tf-idf retrieval scoring | Ex 2, 3b |
 
+**Formulation recipe** — no arithmetic, but mechanical enough to drill like one, and it has been worth
+10–13 points on *both* papers.
+
+| # | Recipe | 2024 | 2025 | Points |
+|---|--------|------|------|--------|
+| 18 | RL problem formulation (MDP) | Q8 | Q8 | 10–13 |
+
 ---
 
 ## 1. Scaled dot-product attention
@@ -746,6 +753,98 @@ Normalize each document over **all** its terms, not just the query terms — Doc
 
 **Traps:** $\text{tf}$ is $1 + \log_{10}(\text{count})$, not the raw count. A term present in every
 document scores zero. Document normalization runs over every term in the document.
+
+---
+
+## 18. RL problem formulation (MDP)
+
+*Not a calculation — a fill-in-the-blanks template. The paper describes a scenario (a character chasing
+something, a character learning a skill) and asks you to cast it as a reinforcement learning problem.
+Both past papers spend 10–13 points here and neither asks for a single number. Walk the MDP tuple in
+order and read each slot off the scenario text.*
+
+$$\text{MDP} = (\mathcal{S},\, \mathcal{A},\, \pi,\, r,\, \gamma)$$
+
+**where:**
+- $\mathcal{S}$ — the **state space**; $s_t$ is what the agent observes at time $t$
+- $\mathcal{A}$ — the **action space**; $a_t$ is what the agent does. Continuous here, always
+- $\pi(a_t \mid s_t)$ — the **policy**, the network being trained: state in, action distribution out
+- $r_t$ — the **reward** at step $t$, the scalar that encodes the goal
+- $\gamma \in (0, 1]$ — the **discount factor**, how much future reward is worth now
+
+### The four steps
+
+**Step 1 — the state.** Ask: *could a policy that sees only this decide what to do?* Include the agent's
+own configuration **and everything in the scene that moves**. A relative quantity (target minus agent)
+scores better than two absolute ones, because it is what the policy actually needs.
+
+**Step 2 — the action.** The scenario hands you the dynamics, e.g. $y_t = f(y_{t-1}, z_t)$. The action is
+**whatever argument of $f$ you control** — here $z_t$. Do not invent "move left / move right"; the
+equation already names it.
+
+**Step 3 — the policy network.** For a **continuous** action space the policy is a **regressor, not a
+classifier**, and a *stochastic* policy does **not** output an action. It outputs the **parameters of a
+distribution over actions** — for a Gaussian, a mean and a standard deviation — and you get the action by
+**sampling** it:
+
+$$a_t \sim \pi(\cdot \mid s_t) = \mathcal{N}\big(\mu_\theta(s_t),\, \sigma_\theta(s_t)^2\big)$$
+
+That sampling **is** the exploration. At evaluation time you may take $\mu_\theta(s_t)$ directly for
+deterministic behaviour, but during training you must sample.
+
+**Step 4 — the reward.** Split the goal sentence into clauses and write **one term per clause**. If they
+ask for two elements, the sentence has two clauses. Typical pairs:
+
+- *"reach the target"* → a proximity term, $-\lVert y_t - x_t \rVert$, or the per-step improvement
+  $\lVert y_{t-1} - x_{t-1} \rVert - \lVert y_t - x_t \rVert$, or a bonus when $\lVert y_t - x_t \rVert < \epsilon$
+- *"as soon as possible"* → a constant **time penalty** $-c$ at every step
+- *"realistically / naturally"* → a motion-realism or control-effort term, $-\lVert z_t \rVert^2$
+
+### The follow-ups they attach
+
+**Return, value, advantage** (2025 Q8b–c). Memorize these four lines; they are worth points verbatim:
+
+$$R(\tau) = \sum_{t=0}^{T} \gamma^t r_t
+\qquad
+Q^\pi(s, a) = \mathbb{E}\big[R(\tau) \mid s_0 = s,\, a_0 = a\big]$$
+
+$$V^\pi(s) = \mathbb{E}_{a \sim \pi}\big[Q^\pi(s, a)\big]
+\qquad
+A^\pi(s, a) = Q^\pi(s, a) - V^\pi(s)$$
+
+$V$ averages $Q$ over the actions the policy would take, so $A$ says **how much better than usual** this
+action was — that is the whole point of the critic's baseline: same expected gradient, far less variance.
+
+**A latent-space / motion prior** (2024 Q8d). When $z_t$ is the latent of a **pre-trained motion model**,
+the policy must stay inside that latent space or the motion stops looking human. Add a **KL divergence to
+the prior** as a loss term (L_14 s.59):
+
+$$\mathcal{L} = \underbrace{\mathcal{L}_\text{PPO}}_{\text{policy}} + \underbrace{\mathbb{E}\big[(R_t - V(s_t))^2\big]}_{\text{value}} + \underbrace{\alpha\,\Psi\Big(\mathrm{KL}\big(\pi(z \mid s)\,\big\|\,\mathcal{N}(0, I)\big)\Big)}_{\text{motion prior}}$$
+
+$\alpha$ weights the prior against the task reward; $\Psi$ clamps it so it cannot dominate. A bare
+$\mathrm{KL}\big(\pi(z \mid s)\,\|\,\mathcal{N}(0,I)\big)$, or the equivalent $\mathbb{E}\big[\lVert z_t \rVert^2\big]$
+penalty, earns the marks too.
+
+**Why PPO + Actor-Critic** (2025 Q8d, three advantages). Pick three of: the **clipped surrogate objective**
+on the ratio $r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_k}(a_t \mid s_t)}$ keeps each update
+inside a trust region, so training is **stable**; clipping makes it safe to take **several gradient epochs
+on one batch**, so it is **sample-efficient** where vanilla policy gradient must throw each batch away; the
+critic's **advantage baseline cuts gradient variance**; and it handles **continuous action spaces** natively.
+
+**Worked (exam 2024 Q8):** ball trajectory $x_0 \ldots x_t$ known, player dynamics $y_t = f(y_{t-1}, z_t)$,
+goal *reach the moving ball as soon as possible*.
+
+- **State (2 pts):** player location $y_t$, **and** ball location $x_t$ — better, the displacement
+  $x_t - y_t$. $y_t$ alone fails: the ball moves, so the policy cannot know which way to run.
+- **Action (1 pt):** the control signal $z_t$, because that is what $f$ consumes.
+- **Policy (3 pts):** input the state; output $\mu(s_t), \sigma(s_t)$; sample from $\mathcal{N}(\mu, \sigma^2)$.
+- **Reward (2 pts):** proximity $-\lVert y_t - x_t \rVert$ **and** a time penalty $-c$ per step.
+- **Prior (2 pts):** the KL term above.
+
+**Traps:** the state needs the *moving* thing in it, not just the agent. A stochastic policy outputs
+distribution parameters, never an action. Count the clauses in the goal sentence — "reach it *as soon as
+possible*" is two requirements and therefore two reward terms. And there is no arithmetic here: if you
+catch yourself computing something, you have misread the question.
 
 ---
 
